@@ -197,24 +197,86 @@
         position="0 0 0"
         rotation="0 0 0"
         scale="1 1 1"
-        portal="width: 1; height: 1.3341666667; depth: 3">
+        portal="width: 1; height: 1.3341666667">
 
+        <!-- Thin decorative frame around the portal opening -->
         <a-entity id="portal-frame">
-          <a-box id="portal-frame-left" depth="0.04" height="1.3541666667" width="0.01" position="-0.505 0 0.01" color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-right" depth="0.04" height="1.3541666667" width="0.01" position="0.505 0 0.01" color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-top" depth="0.04" height="0.01" width="1.02" position="0 0.6721 0.01" color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-bottom" depth="0.04" height="0.01" width="1.02" position="0 -0.6721 0.01" color="#44506c"></a-box>
+          <a-box id="portal-frame-left"   depth="0.04" height="1.3541666667" width="0.01" position="-0.505 0 0.01" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-right"  depth="0.04" height="1.3541666667" width="0.01" position="0.505 0 0.01"  color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-top"    depth="0.04" height="0.01"         width="1.02" position="0 0.6721 0.01"  color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-bottom" depth="0.04" height="0.01"         width="1.02" position="0 -0.6721 0.01" color="#44506c"></a-box>
         </a-entity>
 
-        <!-- Stencil mask plane – the portal component sets up the stencil material -->
-        <a-plane
-          id="portal-wall"
-          data-portal-wall
-          width="1"
-          height="1.3341666667"
-          position="0 0 0.01">
-        </a-plane>
+        <!--
+          HIDER WALLS – 8th Wall depth-occlusion technique.
+          Each box uses depth-mask (colorWrite:false, depthWrite:true, renderOrder:-1).
+          They are invisible but write to the depth buffer, blocking all 3D content
+          behind them.  The only gap is the portal opening (1.0 × 1.3341666667 m).
 
+          All positions are in the image-target's local coordinate space (+Z = toward camera).
+          Content is placed at negative Z (behind the target plane).
+
+          FRONT FACE – 4 strips forming the wall with the rectangular opening:
+            - top strip    (above the opening)
+            - bottom strip (below the opening)
+            - left panel   (left of the opening)
+            - right panel  (right of the opening)
+
+          ENCLOSURE (behind the target, surrounds the 3D content):
+            - back wall, ceiling, floor, left side, right side
+        -->
+        <a-entity id="hider-walls" data-hider-walls>
+
+          <!-- ── Front face strips (z=0.005, just behind the frame) ──────────── -->
+          <!-- top strip: from y=0.667 to y=50 (above opening top = 1.3341666667/2 = 0.6670833) -->
+          <a-box depth="0.01" height="49.333" width="200"
+                 position="0 25.667 0.005"
+                 depth-mask></a-box>
+
+          <!-- bottom strip: from y=-0.667 to y=-50 -->
+          <a-box depth="0.01" height="49.333" width="200"
+                 position="0 -25.667 0.005"
+                 depth-mask></a-box>
+
+          <!-- left panel: full height band, x < -0.5 -->
+          <a-box depth="0.01" height="1.3341666667" width="99"
+                 position="-50 0 0.005"
+                 depth-mask></a-box>
+
+          <!-- right panel: full height band, x > 0.5 -->
+          <a-box depth="0.01" height="1.3341666667" width="99"
+                 position="50 0 0.005"
+                 depth-mask></a-box>
+
+          <!-- ── Enclosure (surrounds the 3D content at z <= 0) ────────────── -->
+          <!-- back wall -->
+          <a-box depth="0.01" height="200" width="200"
+                 position="0 0 -100"
+                 depth-mask></a-box>
+
+          <!-- ceiling -->
+          <a-box depth="200" height="0.01" width="200"
+                 position="0 50 -50"
+                 depth-mask></a-box>
+
+          <!-- floor -->
+          <a-box depth="200" height="0.01" width="200"
+                 position="0 -50 -50"
+                 depth-mask></a-box>
+
+          <!-- left side -->
+          <a-box depth="200" height="200" width="0.01"
+                 position="-100 0 -50"
+                 depth-mask></a-box>
+
+          <!-- right side -->
+          <a-box depth="200" height="200" width="0.01"
+                 position="100 0 -50"
+                 depth-mask></a-box>
+
+        </a-entity>
+
+        <!-- 3D portal content – visible only through the opening left by the hider walls -->
         <a-entity id="portal-contents" data-portal-contents>
           <a-entity id="portal-ambient-light" light="type: ambient; intensity: 0.85; color: #dfe9ff"></a-entity>
           <a-entity

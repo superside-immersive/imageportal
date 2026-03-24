@@ -88,111 +88,23 @@ registerComponent('bob', {
   },
 })
 
+// Portal component – uses the 8th Wall hider-walls depth-occlusion approach:
+// hider-walls (depth-mask material, colorWrite:false, depthWrite:true) form a closed box
+// around the camera with exactly one rectangular opening (the image target).
+// Content behind the opening is visible; camera feed shows everywhere else.
+// User is ALWAYS outside the portal (never walks through).
 registerComponent('portal', {
   schema: {
-    width: {default: 1},
+    width:  {default: 1},
     height: {default: TARGET_HEIGHT},
-    depth: {default: 3},
   },
 
   init() {
-    const {THREE} = window
-    this.THREE = THREE
-    this.portalWall = this.el.querySelector('[data-portal-wall]')
-    this.contents = this.el.querySelector('[data-portal-contents]')
+    this.contents  = this.el.querySelector('[data-portal-contents]')
+    this.hiderWalls = this.el.querySelector('[data-hider-walls]')
 
-    // ── Stencil-based portal ──
-    // 1. The portal-wall plane writes stencil=1 (no color, no depth, no depth TEST)
-    // 2. All portal content only renders where stencil=1 (the opening)
-    // 3. Outside the opening → camera feed shows through (no 3D)
-
-    // Verify stencil buffer is available
-    this.el.sceneEl.addEventListener('loaded', () => {
-      const renderer = this.el.sceneEl.renderer
-      if (renderer) {
-        const gl = renderer.getContext()
-        const stencilBits = gl.getParameter(gl.STENCIL_BITS)
-        console.log('[portal] Stencil bits:', stencilBits)
-        renderer.autoClearStencil = true
-      }
-    })
-
-    this._setupStencilMask()
-
-    if (this.contents) {
-      this.contents.object3D.visible = true
-    }
-
-    // Apply stencil test to content meshes (multiple attempts for async loading)
-    const applyStencil = () => this._applyStencilToContents()
-
-    const cityEl = this.el.querySelector('#portal-city')
-    if (cityEl) {
-      cityEl.addEventListener('model-loaded', applyStencil)
-    }
-
-    this.el.sceneEl.addEventListener('loaded', () => {
-      applyStencil()
-      setTimeout(applyStencil, 500)
-      setTimeout(applyStencil, 2000)
-      setTimeout(applyStencil, 5000)
-    })
-  },
-
-  _setupStencilMask() {
-    if (!this.portalWall) return
-    const {THREE} = this
-
-    const applyMask = () => {
-      const mesh = this.portalWall.getObject3D('mesh')
-      if (!mesh) return false
-
-      mesh.traverse((obj) => {
-        if (obj.isMesh) {
-          obj.material = new THREE.MeshBasicMaterial({
-            colorWrite: false,
-            depthWrite: false,
-            depthTest: false,
-            stencilWrite: true,
-            stencilRef: 1,
-            stencilFunc: THREE.AlwaysStencilFunc,
-            stencilZPass: THREE.ReplaceStencilOp,
-            stencilFail: THREE.KeepStencilOp,
-            stencilZFail: THREE.KeepStencilOp,
-          })
-          obj.renderOrder = -1
-          obj.frustumCulled = false
-        }
-      })
-
-      this.portalWall.object3D.visible = true
-      return true
-    }
-
-    if (!applyMask()) {
-      this.portalWall.addEventListener('object3dset', () => applyMask())
-    }
-  },
-
-  _applyStencilToContents() {
-    if (!this.contents) return
-    const {THREE} = this
-
-    this.contents.object3D.traverse((obj) => {
-      if (obj.isMesh && obj.material) {
-        const mats = Array.isArray(obj.material) ? obj.material : [obj.material]
-        mats.forEach((mat) => {
-          mat.stencilWrite = false
-          mat.stencilRef = 1
-          mat.stencilFunc = THREE.EqualStencilFunc
-          mat.stencilFail = THREE.KeepStencilOp
-          mat.stencilZFail = THREE.KeepStencilOp
-          mat.stencilZPass = THREE.KeepStencilOp
-          mat.needsUpdate = true
-        })
-        obj.renderOrder = 1
-      }
-    })
+    if (this.contents)  this.contents.object3D.visible  = true
+    if (this.hiderWalls) this.hiderWalls.object3D.visible = true
   },
 })
 
