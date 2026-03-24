@@ -6,9 +6,64 @@ const poster2Target = require('../image-targets copy/poster2.json')
 const sceneEl = document.querySelector('a-scene')
 const statusEl = document.getElementById('status')
 const compatibilityEl = document.getElementById('compatibility')
+const portalRootEl = document.getElementById('portal-root')
+const portalScaleInputEl = document.getElementById('portal-scale')
+const portalScaleValueEl = document.getElementById('portal-scale-value')
 const editorMode =
   window.location.pathname.endsWith('/editor.html') ||
   new URLSearchParams(window.location.search).has('editor')
+
+const PORTAL_SCALE_STORAGE_KEY = 'imageportal.portalScale'
+const DEFAULT_PORTAL_SCALE = 1
+const MIN_PORTAL_SCALE = 0.75
+const MAX_PORTAL_SCALE = 1.15
+
+const clampPortalScale = (value) => {
+  const numeric = Number(value)
+
+  if (!Number.isFinite(numeric)) {
+    return DEFAULT_PORTAL_SCALE
+  }
+
+  return Math.min(MAX_PORTAL_SCALE, Math.max(MIN_PORTAL_SCALE, numeric))
+}
+
+const formatPortalScale = (value) => clampPortalScale(value).toFixed(2)
+
+const applyPortalScale = (value, {persist = true} = {}) => {
+  const scale = clampPortalScale(value)
+
+  if (portalRootEl) {
+    portalRootEl.setAttribute('scale', `${scale} ${scale} ${scale}`)
+  }
+
+  if (portalScaleInputEl && portalScaleInputEl.value !== String(scale)) {
+    portalScaleInputEl.value = String(scale)
+  }
+
+  if (portalScaleValueEl) {
+    portalScaleValueEl.textContent = formatPortalScale(scale)
+  }
+
+  if (persist) {
+    try {
+      window.localStorage.setItem(PORTAL_SCALE_STORAGE_KEY, String(scale))
+    } catch (error) {
+      // Ignore storage failures in private mode or restricted contexts.
+    }
+  }
+
+  return scale
+}
+
+const loadPortalScale = () => {
+  try {
+    const stored = window.localStorage.getItem(PORTAL_SCALE_STORAGE_KEY)
+    return clampPortalScale(stored ?? DEFAULT_PORTAL_SCALE)
+  } catch (error) {
+    return DEFAULT_PORTAL_SCALE
+  }
+}
 
 const setStatus = (message) => {
   if (statusEl) {
@@ -79,6 +134,19 @@ const attachUiListeners = () => {
   })
 }
 
+const attachScaleControl = () => {
+  const initialScale = applyPortalScale(loadPortalScale(), {persist: false})
+
+  if (portalScaleInputEl) {
+    portalScaleInputEl.value = String(initialScale)
+    portalScaleInputEl.addEventListener('input', (event) => {
+      applyPortalScale(event.target.value)
+    })
+  }
+
+  applyPortalScale(initialScale, {persist: false})
+}
+
 const waitForSceneLoad = () => new Promise((resolve) => {
   if (!sceneEl || sceneEl.hasLoaded) {
     resolve()
@@ -90,6 +158,8 @@ const waitForSceneLoad = () => new Promise((resolve) => {
 
 const startReality = async () => {
   await waitForSceneLoad()
+
+  attachScaleControl()
 
   applySavedPortalEditorState()
 
