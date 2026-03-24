@@ -1,11 +1,13 @@
 import './portal/portal-components'
-import './editor'
 
 const poster2Target = require('../image-targets copy/poster2.json')
 
 const sceneEl = document.querySelector('a-scene')
 const statusEl = document.getElementById('status')
 const compatibilityEl = document.getElementById('compatibility')
+const editorMode =
+  window.location.pathname.endsWith('/editor.html') ||
+  new URLSearchParams(window.location.search).has('editor')
 
 const setStatus = (message) => {
   if (statusEl) {
@@ -87,6 +89,12 @@ const waitForSceneLoad = () => new Promise((resolve) => {
 
 const startReality = async () => {
   await waitForSceneLoad()
+
+  if (editorMode) {
+    setStatus('Modo editor activo. XR deshabilitado para usar el inspector de A-Frame.')
+    setCompatibility('Abrí el inspector con ctrl + alt + i.')
+    return
+  }
 
   if (!window.XR8 || !window.XR8.XrController || !sceneEl) {
     setStatus('XR8 todavía no está disponible.')
