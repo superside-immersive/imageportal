@@ -1,4 +1,5 @@
 import './portal/portal-components'
+import './editor'
 
 const poster2Target = require('../image-targets copy/poster2.json')
 

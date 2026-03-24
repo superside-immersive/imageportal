@@ -1,10 +1,12 @@
 const path = require('path')
+const fs = require('fs')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const rootPath = process.cwd()
 const distPath = path.join(rootPath, 'dist')
 const srcPath = path.join(rootPath, 'src')
+const sceneFilePath = path.join(srcPath, '.expanse.json')
 
 const makeTsLoader = () => ({
   test: /\.ts$/,
@@ -23,6 +25,12 @@ const config = {
     new HtmlWebpackPlugin({
       template: path.join(srcPath, 'index.html'),
       filename: 'index.html',
+      scriptLoading: 'blocking',
+      inject: false,
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(srcPath, 'editor.html'),
+      filename: 'editor.html',
       scriptLoading: 'blocking',
       inject: false,
     }),
@@ -54,6 +62,9 @@ const config = {
   },
   mode: 'production',
   context: rootPath,
+  watchOptions: {
+    ignored: [sceneFilePath],
+  },
   devServer: {
     open: false,
     compress: true,
@@ -70,6 +81,65 @@ const config = {
         warnings: false,
         errors: true,
       },
+    },
+    setupMiddlewares: (middlewares, devServer) => {
+      if (!devServer?.app) {
+        return middlewares
+      }
+
+      devServer.app.use((req, res, next) => {
+        if (req.method !== 'POST' || req.path !== '/__editor/scene') {
+          return next()
+        }
+
+        let body = ''
+        req.setEncoding('utf8')
+
+        req.on('data', (chunk) => {
+          body += chunk
+
+          if (body.length > 5 * 1024 * 1024) {
+            res.status(413).json({ok: false, error: 'Payload too large'})
+            req.destroy()
+          }
+        })
+
+        req.on('end', () => {
+          try {
+            req.body = body ? JSON.parse(body) : {}
+            next()
+          } catch (error) {
+            res.status(400).json({ok: false, error: 'Invalid JSON payload'})
+          }
+        })
+      })
+
+      devServer.app.get('/__editor/scene', (_, res) => {
+        try {
+          const sceneContents = fs.readFileSync(sceneFilePath, 'utf8')
+          res.json(JSON.parse(sceneContents))
+        } catch (error) {
+          res.status(500).json({ok: false, error: 'Could not read scene file'})
+        }
+      })
+
+      devServer.app.post('/__editor/scene', (req, res) => {
+        try {
+          const nextScene = req.body
+
+          if (!nextScene || typeof nextScene !== 'object' || !nextScene.objects) {
+            res.status(400).json({ok: false, error: 'Scene payload must include objects'})
+            return
+          }
+
+          fs.writeFileSync(sceneFilePath, `${JSON.stringify(nextScene, null, 2)}\n`, 'utf8')
+          res.json({ok: true, updatedAt: new Date().toISOString()})
+        } catch (error) {
+          res.status(500).json({ok: false, error: 'Could not write scene file'})
+        }
+      })
+
+      return middlewares
     },
   },
 }
