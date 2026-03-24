@@ -102,9 +102,20 @@ registerComponent('portal', {
     this.contents = this.el.querySelector('[data-portal-contents]')
 
     // ── Stencil-based portal ──
-    // 1. The portal-wall plane writes stencil=1 (no color, no depth)
+    // 1. The portal-wall plane writes stencil=1 (no color, no depth, no depth TEST)
     // 2. All portal content only renders where stencil=1 (the opening)
     // 3. Outside the opening → camera feed shows through (no 3D)
+
+    // Verify stencil buffer is available
+    this.el.sceneEl.addEventListener('loaded', () => {
+      const renderer = this.el.sceneEl.renderer
+      if (renderer) {
+        const gl = renderer.getContext()
+        const stencilBits = gl.getParameter(gl.STENCIL_BITS)
+        console.log('[portal] Stencil bits:', stencilBits)
+        renderer.autoClearStencil = true
+      }
+    })
 
     this._setupStencilMask()
 
@@ -141,6 +152,7 @@ registerComponent('portal', {
           obj.material = new THREE.MeshBasicMaterial({
             colorWrite: false,
             depthWrite: false,
+            depthTest: false,
             stencilWrite: true,
             stencilRef: 1,
             stencilFunc: THREE.AlwaysStencilFunc,
@@ -170,7 +182,7 @@ registerComponent('portal', {
       if (obj.isMesh && obj.material) {
         const mats = Array.isArray(obj.material) ? obj.material : [obj.material]
         mats.forEach((mat) => {
-          mat.stencilWrite = true
+          mat.stencilWrite = false
           mat.stencilRef = 1
           mat.stencilFunc = THREE.EqualStencilFunc
           mat.stencilFail = THREE.KeepStencilOp
