@@ -1,4 +1,6 @@
-const TARGET_HEIGHT = 1601 / 1200
+// Physical poster dimensions: 74cm wide × 100cm tall
+const TARGET_WIDTH  = 0.74
+const TARGET_HEIGHT = 1.0
 
 const registerComponent = (name, definition) => {
   if (!window.AFRAME || window.AFRAME.components[name]) {
@@ -95,7 +97,7 @@ registerComponent('bob', {
 // User is ALWAYS outside the portal (never walks through).
 registerComponent('portal', {
   schema: {
-    width:  {default: 1},
+    width:  {default: TARGET_WIDTH},
     height: {default: TARGET_HEIGHT},
   },
 
@@ -140,7 +142,8 @@ registerComponent('image-target-anchor', {
 
     object3D.position.set(position.x, position.y, position.z)
     object3D.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w)
-    object3D.scale.set(scale, scale, scale)
+    // Force scale=1 – portal dimensions are hardcoded in local space to match the physical poster
+    object3D.scale.set(1, 1, 1)
     object3D.visible = true
   },
 
