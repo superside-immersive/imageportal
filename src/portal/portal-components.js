@@ -142,8 +142,7 @@ registerComponent('image-target-anchor', {
 
     object3D.position.set(position.x, position.y, position.z)
     object3D.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w)
-    // Force scale=1 – portal dimensions are hardcoded in local space to match the physical poster
-    object3D.scale.set(1, 1, 1)
+    object3D.scale.set(scale, scale, scale)
     object3D.visible = true
   },
 
