@@ -228,14 +228,17 @@
         <a-entity id="hider-walls" data-hider-walls>
 
           <!-- ── Front face strips (z=0.005, just behind the frame) ──────────── -->
-          <!-- top strip: from y=0.667 to y=50 (above opening top = 1.3341666667/2 = 0.6670833) -->
-          <a-box depth="0.01" height="49.333" width="200"
-                 position="0 25.667 0.005"
+          <!-- top strip: from y=0.6670833 to y=50
+               center = (0.6670833 + 50) / 2 = 25.33354
+               height = 50 - 0.6670833 = 49.33292 -->
+          <a-box depth="0.01" height="49.33292" width="200"
+                 position="0 25.33354 0.005"
                  depth-mask></a-box>
 
-          <!-- bottom strip: from y=-0.667 to y=-50 -->
-          <a-box depth="0.01" height="49.333" width="200"
-                 position="0 -25.667 0.005"
+          <!-- bottom strip: from y=-50 to y=-0.6670833
+               center = (-50 + -0.6670833) / 2 = -25.33354 -->
+          <a-box depth="0.01" height="49.33292" width="200"
+                 position="0 -25.33354 0.005"
                  depth-mask></a-box>
 
           <!-- left panel: full height band, x < -0.5 -->
@@ -289,13 +292,14 @@
           <a-sphere id="portal-sky" radius="12" segments-width="20" segments-height="18" position="0 0 -13" material="shader: flat; side: back; color: #15203b"></a-sphere>
           <a-circle id="portal-floor" radius="4" rotation="-90 0 0" position="0 -1.08 -1.7" material="color: #223150; opacity: 0.92"></a-circle>
 
-          <a-entity
+          <!-- GLB temporarily disabled for performance testing -->
+          <!-- <a-entity
             id="portal-city"
             gltf-model="#cityModel"
             position="0 -0.93 0"
             rotation="0 270 0"
             scale="0.12 0.12 0.12">
-          </a-entity>
+          </a-entity> -->
 
           <a-sphere
             id="portal-orb"
