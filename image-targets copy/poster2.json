@@ -2,7 +2,7 @@
   "imagePath": "image-targets/poster2_luminance.png",
   "metadata": null,
   "name": "poster2",
-  "physicalWidthInMeters": 0.21,
+  "physicalWidthInMeters": 0.74,
   "type": "PLANAR",
   "properties": {
     "top": 0,
