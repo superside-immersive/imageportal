@@ -166,6 +166,7 @@
 
     <a-assets timeout="20000">
       <a-asset-item id="cityModel" src="./assets/city.glb"></a-asset-item>
+      <img id="poster2Reference" src="./image-targets/poster2_original.png" alt="Poster 2 reference">
     </a-assets>
 
     <a-camera id="camera" position="0 0.85 2.6"></a-camera>
@@ -174,29 +175,47 @@
       id="target-anchor"
       image-target-anchor="name: poster2"
       position="0 0 0"
+      rotation="0 0 0"
       scale="1 1 1">
+
+      <a-entity id="target-reference" visible="false">
+        <a-plane
+          id="target-reference-image"
+          width="1"
+          height="1.3341666667"
+          position="0 0 -0.025"
+          material="src: #poster2Reference; transparent: true; opacity: 0.58; side: double; shader: flat">
+        </a-plane>
+        <a-box id="target-reference-top" width="1.06" height="0.025" depth="0.012" position="0 0.6795833334 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-bottom" width="1.06" height="0.025" depth="0.012" position="0 -0.6795833334 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-left" width="0.025" height="1.3841666667" depth="0.012" position="-0.5175 0 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-right" width="0.025" height="1.3841666667" depth="0.012" position="0.5175 0 -0.02" color="#8ab4ff"></a-box>
+      </a-entity>
 
       <a-entity
         id="portal-root"
+        position="0 0 0"
+        rotation="0 0 0"
+        scale="1 1 1"
         portal="width: 1; height: 1.3341666667; depth: 3">
 
         <a-entity id="portal-frame">
-          <a-box depth="0.12" height="2.2" width="0.16" position="-0.925 0 0.02" color="#6c7fb0"></a-box>
-          <a-box depth="0.12" height="2.2" width="0.16" position="0.925 0 0.02" color="#6c7fb0"></a-box>
-          <a-box depth="0.12" height="0.18" width="1.85" position="0 1.19 0.02" color="#6c7fb0"></a-box>
-          <a-box depth="0.2" height="0.12" width="1.95" position="0 -1.16 0.08" color="#44506c"></a-box>
+          <a-box id="portal-frame-left" depth="0.12" height="2.2" width="0.16" position="-0.925 0 0.02" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-right" depth="0.12" height="2.2" width="0.16" position="0.925 0 0.02" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-top" depth="0.12" height="0.18" width="1.85" position="0 1.19 0.02" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-bottom" depth="0.2" height="0.12" width="1.95" position="0 -1.16 0.08" color="#44506c"></a-box>
         </a-entity>
 
         <a-entity id="hider-walls" data-hider-walls>
-          <a-plane width="1.85" height="0.4329166667" position="0 0.8835416667 0" depth-mask></a-plane>
-          <a-plane width="1.85" height="0.4329166667" position="0 -0.8835416667 0" depth-mask></a-plane>
-          <a-plane width="0.425" height="1.3341666667" position="-0.7125 0 0" depth-mask></a-plane>
-          <a-plane width="0.425" height="1.3341666667" position="0.7125 0 0" depth-mask></a-plane>
-          <a-plane width="1.85" height="2.2" position="0 0 -3" depth-mask></a-plane>
-          <a-plane width="3" height="2.2" position="-0.925 0 -1.5" rotation="0 90 0" depth-mask></a-plane>
-          <a-plane width="3" height="2.2" position="0.925 0 -1.5" rotation="0 -90 0" depth-mask></a-plane>
-          <a-plane width="1.85" height="3" position="0 1.1 -1.5" rotation="90 0 0" depth-mask></a-plane>
-          <a-plane width="1.85" height="3" position="0 -1.1 -1.5" rotation="-90 0 0" depth-mask></a-plane>
+          <a-plane id="hider-front-top" width="1.85" height="0.4329166667" position="0 0.8835416667 0" depth-mask></a-plane>
+          <a-plane id="hider-front-bottom" width="1.85" height="0.4329166667" position="0 -0.8835416667 0" depth-mask></a-plane>
+          <a-plane id="hider-front-left" width="0.425" height="1.3341666667" position="-0.7125 0 0" depth-mask></a-plane>
+          <a-plane id="hider-front-right" width="0.425" height="1.3341666667" position="0.7125 0 0" depth-mask></a-plane>
+          <a-plane id="hider-back" width="1.85" height="2.2" position="0 0 -3" depth-mask></a-plane>
+          <a-plane id="hider-left-wall" width="3" height="2.2" position="-0.925 0 -1.5" rotation="0 90 0" depth-mask></a-plane>
+          <a-plane id="hider-right-wall" width="3" height="2.2" position="0.925 0 -1.5" rotation="0 -90 0" depth-mask></a-plane>
+          <a-plane id="hider-top-wall" width="1.85" height="3" position="0 1.1 -1.5" rotation="90 0 0" depth-mask></a-plane>
+          <a-plane id="hider-bottom-wall" width="1.85" height="3" position="0 -1.1 -1.5" rotation="-90 0 0" depth-mask></a-plane>
         </a-entity>
 
         <a-plane
@@ -209,23 +228,26 @@
         </a-plane>
 
         <a-entity id="portal-contents" data-portal-contents>
-          <a-entity light="type: ambient; intensity: 0.85; color: #dfe9ff"></a-entity>
+          <a-entity id="portal-ambient-light" light="type: ambient; intensity: 0.85; color: #dfe9ff"></a-entity>
           <a-entity
+            id="portal-key-light"
             light="type: directional; intensity: 1.15; castShadow: true; shadowMapHeight: 1024; shadowMapWidth: 1024"
             position="2.5 3.8 1.5">
           </a-entity>
 
-          <a-sphere radius="14" segments-width="20" segments-height="18" position="0 0 -1" material="shader: flat; side: back; color: #15203b"></a-sphere>
-          <a-circle radius="4" rotation="-90 0 0" position="0 -1.08 -1.7" material="color: #223150; opacity: 0.92"></a-circle>
+          <a-sphere id="portal-sky" radius="14" segments-width="20" segments-height="18" position="0 0 -1" material="shader: flat; side: back; color: #15203b"></a-sphere>
+          <a-circle id="portal-floor" radius="4" rotation="-90 0 0" position="0 -1.08 -1.7" material="color: #223150; opacity: 0.92"></a-circle>
 
           <a-entity
+            id="portal-city"
             gltf-model="#cityModel"
-            position="0 -0.92 -2.1"
+            position="0 0 0"
             rotation="0 180 0"
             scale="0.12 0.12 0.12">
           </a-entity>
 
           <a-sphere
+            id="portal-orb"
             radius="0.12"
             position="0 0.55 -1.2"
             material="shader: flat; color: #8ab4ff; emissive: #8ab4ff; emissiveIntensity: 1.2"

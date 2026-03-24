@@ -1,4 +1,5 @@
 import './portal/portal-components'
+import {applySavedPortalEditorState, enablePortalEditorMode} from './portal/portal-editor'
 
 const poster2Target = require('../image-targets copy/poster2.json')
 
@@ -90,9 +91,10 @@ const waitForSceneLoad = () => new Promise((resolve) => {
 const startReality = async () => {
   await waitForSceneLoad()
 
+  applySavedPortalEditorState()
+
   if (editorMode) {
-    setStatus('Modo editor activo. XR deshabilitado para usar el inspector de A-Frame.')
-    setCompatibility('Abrí el inspector con ctrl + alt + i.')
+    enablePortalEditorMode({sceneEl, setStatus, setCompatibility})
     return
   }
 
