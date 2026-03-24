@@ -200,24 +200,19 @@
         portal="width: 1; height: 1.3341666667; depth: 3">
 
         <a-entity id="portal-frame">
-          <a-box id="portal-frame-left" depth="0.06" height="1.3941666667" width="0.03" position="-0.515 0 0.02" color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-right" depth="0.06" height="1.3941666667" width="0.03" position="0.515 0 0.02" color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-top" depth="0.06" height="0.03" width="1.06" position="0 0.6821" color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-bottom" depth="0.08" height="0.03" width="1.06" position="0 -0.6821 0.02" color="#44506c"></a-box>
+          <a-box id="portal-frame-left" depth="0.04" height="1.3541666667" width="0.01" position="-0.505 0 0.01" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-right" depth="0.04" height="1.3541666667" width="0.01" position="0.505 0 0.01" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-top" depth="0.04" height="0.01" width="1.02" position="0 0.6721 0.01" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-bottom" depth="0.04" height="0.01" width="1.02" position="0 -0.6721 0.01" color="#44506c"></a-box>
         </a-entity>
 
         <a-entity id="hider-walls" data-hider-walls>
-          <!-- Front mask: 4 huge planes around the 1.0 x 1.334 opening, covering full viewport -->
-          <a-plane id="hider-front-top" width="100" height="50" position="0 25.667 0" depth-mask></a-plane>
-          <a-plane id="hider-front-bottom" width="100" height="50" position="0 -25.667 0" depth-mask></a-plane>
-          <a-plane id="hider-front-left" width="50" height="1.3341666667" position="-25.5 0 0" depth-mask></a-plane>
-          <a-plane id="hider-front-right" width="50" height="1.3341666667" position="25.5 0 0" depth-mask></a-plane>
-          <!-- Box walls to contain sky sphere (r=14) and all content -->
-          <a-plane id="hider-back" width="100" height="100" position="0 0 -3" depth-mask></a-plane>
-          <a-plane id="hider-left-wall" width="3" height="100" position="-0.5 0 -1.5" rotation="0 90 0" depth-mask></a-plane>
-          <a-plane id="hider-right-wall" width="3" height="100" position="0.5 0 -1.5" rotation="0 -90 0" depth-mask></a-plane>
-          <a-plane id="hider-top-wall" width="1" height="3" position="0 0.667 -1.5" rotation="90 0 0" depth-mask></a-plane>
-          <a-plane id="hider-bottom-wall" width="1" height="3" position="0 -0.667 -1.5" rotation="-90 0 0" depth-mask></a-plane>
+          <!-- Front mask: 4 huge planes around the 1.0 x 1.334 opening, covering full viewport.
+               No back/side walls — they were blocking the sky sphere and content behind the opening. -->
+          <a-plane id="hider-front-top" width="200" height="100" position="0 50.667 0" depth-mask></a-plane>
+          <a-plane id="hider-front-bottom" width="200" height="100" position="0 -50.667 0" depth-mask></a-plane>
+          <a-plane id="hider-front-left" width="100" height="1.3341666667" position="-50.5 0 0" depth-mask></a-plane>
+          <a-plane id="hider-front-right" width="100" height="1.3341666667" position="50.5 0 0" depth-mask></a-plane>
         </a-entity>
 
         <a-plane
