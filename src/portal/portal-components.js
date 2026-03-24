@@ -96,36 +96,22 @@ registerComponent('portal', {
   },
 
   init() {
-    this.camera = document.getElementById('camera')
+    // Always-outside mode: user always views portal from the front.
+    // Contents visible (seen through opening), occlusion walls active,
+    // portal-wall depth-mask off (only needed for "inside looking out").
     this.contents = this.el.querySelector('[data-portal-contents]')
     this.walls = this.el.querySelector('[data-hider-walls]')
     this.portalWall = this.el.querySelector('[data-portal-wall]')
-    this.isInPortalSpace = false
-    this.wasOutside = true
-    this.localCameraPosition = new window.THREE.Vector3()
-  },
 
-  tick() {
-    if (!this.camera || !this.contents || !this.walls || !this.portalWall) {
-      return
+    const apply = () => {
+      if (this.contents) this.contents.object3D.visible = true
+      if (this.walls) this.walls.object3D.visible = true
+      if (this.portalWall) this.portalWall.object3D.visible = false
     }
 
-    this.camera.object3D.getWorldPosition(this.localCameraPosition)
-    this.el.object3D.worldToLocal(this.localCameraPosition)
-
-    const isOutside = this.localCameraPosition.z > this.data.depth / 2
-    const withinPortalBounds =
-      Math.abs(this.localCameraPosition.x) < this.data.width / 2 &&
-      Math.abs(this.localCameraPosition.y) < this.data.height / 2
-
-    if (this.wasOutside !== isOutside && withinPortalBounds) {
-      this.isInPortalSpace = !isOutside
-    }
-
-    this.contents.object3D.visible = this.isInPortalSpace || isOutside
-    this.walls.object3D.visible = !this.isInPortalSpace && isOutside
-    this.portalWall.object3D.visible = this.isInPortalSpace && !isOutside
-    this.wasOutside = isOutside
+    // Apply immediately and also after scene loads (in case objects aren't ready yet)
+    apply()
+    this.el.sceneEl.addEventListener('loaded', apply)
   },
 })
 
