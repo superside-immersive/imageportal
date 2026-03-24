@@ -1,0 +1,71 @@
+import * as ecs from '@8thwall/ecs'
+
+// This component ensures portal hider walls render before any city geometry
+// by setting renderOrder = -1 on hider plane Object3Ds via the Three.js layer.
+// It also hides the image target's default visual (the printed image).
+
+ecs.registerComponent({
+  name: 'Portal Setup',
+  schema: {
+    // Entity IDs for the 4 hider mask walls
+    maskTop: ecs.eid,
+    maskBottom: ecs.eid,
+    maskLeft: ecs.eid,
+    maskRight: ecs.eid,
+    // Entity ID for the city model
+    city: ecs.eid,
+  },
+  schemaDefaults: {},
+  stateMachine: ({world, eid, schemaAttribute}) => {
+    let applied = false
+
+    const applyRenderOrder = () => {
+      if (applied) return
+      const {maskTop, maskBottom, maskLeft, maskRight, city} = schemaAttribute.get(eid)
+      const three = world.three as any
+
+      if (!three || !three.entityToObject) return
+
+      const maskEids = [maskTop, maskBottom, maskLeft, maskRight]
+      let allFound = true
+
+      for (const maskEid of maskEids) {
+        const obj = three.entityToObject.get(maskEid)
+        if (!obj) {
+          allFound = false
+          continue
+        }
+        // Ensure hider planes render first (before city geometry)
+        obj.renderOrder = -1
+        obj.traverse((child: any) => {
+          if (child.material) {
+            child.renderOrder = -1
+            // Ensure the hider material writes to depth
+            child.material.depthWrite = true
+            child.material.depthTest = true
+            child.material.colorWrite = false
+          }
+        })
+      }
+
+      // Set the city to render after hiders
+      const cityObj = three.entityToObject.get(city)
+      if (cityObj) {
+        cityObj.renderOrder = 1
+        cityObj.traverse((child: any) => {
+          if (child.material) {
+            child.renderOrder = 1
+          }
+        })
+      }
+
+      if (allFound && cityObj) {
+        applied = true
+      }
+    }
+
+    ecs.defineState('default')
+      .initial()
+      .onTick(applyRenderOrder)
+  },
+})

@@ -1,0 +1,22 @@
+{
+  "imagePath": "image-targets/gemini_generated_image_ad2ndiad2ndiad2n_luminance.png",
+  "metadata": null,
+  "name": "gemini_generated_image_ad2ndiad2ndiad2n",
+  "type": "PLANAR",
+  "properties": {
+    "top": 0,
+    "left": 0,
+    "width": 1792,
+    "height": 2389,
+    "originalWidth": 1792,
+    "originalHeight": 2390
+  },
+  "resources": {
+    "originalImage": "image-targets/gemini_generated_image_ad2ndiad2ndiad2n_original.png",
+    "croppedImage": "image-targets/gemini_generated_image_ad2ndiad2ndiad2n_cropped.png",
+    "thumbnailImage": "image-targets/gemini_generated_image_ad2ndiad2ndiad2n_thumbnail.png",
+    "luminanceImage": "image-targets/gemini_generated_image_ad2ndiad2ndiad2n_luminance.png"
+  },
+  "created": 1773885533311,
+  "updated": 1773885533311
+}

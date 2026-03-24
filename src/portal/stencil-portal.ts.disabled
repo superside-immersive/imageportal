@@ -1,0 +1,110 @@
+import * as ecs from '@8thwall/ecs'
+
+// Stencil-based portal effect:
+// 1. Portal mask plane writes stencil=1 (no color, no depth)
+// 2. City + sky only render where stencil=1 (inside portal)
+// 3. Outside the portal: camera feed shows normally
+// This hides the tracked image within the portal area by rendering city+sky on top.
+
+ecs.registerComponent({
+  name: 'Stencil Portal',
+  schema: {
+    portalMask: ecs.eid,
+    city: ecs.eid,
+    skyBackground: ecs.eid,
+  },
+  schemaDefaults: {},
+  stateMachine: ({world, eid, schemaAttribute}) => {
+    const THREE = (window as any).THREE
+    let cityMeshesFound = false
+    let tickCount = 0
+
+    const configureStencil = () => {
+      const {portalMask, city, skyBackground} = schemaAttribute.get(eid)
+      const three = world.three as any
+      if (!three || !three.entityToObject) return
+
+      // Ensure renderer clears stencil each frame
+      if (three.renderer) {
+        three.renderer.autoClearStencil = true
+      }
+
+      const maskObj = three.entityToObject.get(portalMask)
+      const cityObj = three.entityToObject.get(city)
+      const skyObj = three.entityToObject.get(skyBackground)
+
+      // --- Portal Mask: writes stencil=1, invisible (no color, no depth) ---
+      if (maskObj) {
+        maskObj.renderOrder = -1
+        maskObj.traverse((child: any) => {
+          if (child.material) {
+            child.material.colorWrite = false
+            child.material.depthWrite = false
+            child.material.stencilWrite = true
+            child.material.stencilRef = 1
+            child.material.stencilFunc = THREE.AlwaysStencilFunc
+            child.material.stencilZPass = THREE.ReplaceStencilOp
+            child.material.stencilFail = THREE.KeepStencilOp
+            child.material.stencilZFail = THREE.KeepStencilOp
+            child.material.needsUpdate = true
+            child.renderOrder = -1
+          }
+        })
+      }
+
+      // --- City: only render where stencil=1 ---
+      if (cityObj) {
+        let meshCount = 0
+        cityObj.renderOrder = 2
+        cityObj.traverse((child: any) => {
+          if (child.material) {
+            // Handle material arrays (multi-material meshes)
+            const materials = Array.isArray(child.material) ? child.material : [child.material]
+            for (const mat of materials) {
+              mat.stencilWrite = false
+              mat.stencilRef = 1
+              mat.stencilFunc = THREE.EqualStencilFunc
+              mat.stencilFuncMask = 0xFF
+              mat.needsUpdate = true
+            }
+            child.renderOrder = 2
+            meshCount++
+          }
+        })
+        if (meshCount > 0 && !cityMeshesFound) {
+          cityMeshesFound = true
+          console.log(`Stencil Portal: configured ${meshCount} city meshes`)
+        }
+      }
+
+      // --- Sky Background: only render where stencil=1 ---
+      if (skyObj) {
+        skyObj.renderOrder = 1
+        skyObj.traverse((child: any) => {
+          if (child.material) {
+            const materials = Array.isArray(child.material) ? child.material : [child.material]
+            for (const mat of materials) {
+              mat.stencilWrite = false
+              mat.stencilRef = 1
+              mat.stencilFunc = THREE.EqualStencilFunc
+              mat.stencilFuncMask = 0xFF
+              mat.needsUpdate = true
+            }
+            child.renderOrder = 1
+          }
+        })
+      }
+    }
+
+    ecs.defineState('default')
+      .initial()
+      .onTick(() => {
+        tickCount++
+        // Apply every tick for the first 5 seconds (GLTF may still be loading)
+        // Then every 30 ticks to catch any material changes
+        if (tickCount < 150 || tickCount % 30 === 0) {
+          configureStencil()
+        }
+      })
+  },
+})

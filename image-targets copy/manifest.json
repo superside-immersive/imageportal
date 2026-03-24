@@ -1,0 +1,77 @@
+{
+  "generatedAt": "2026-03-19T01:58:53.330Z",
+  "targets": [
+    {
+      "name": "gemini_generated_image_ad2ndiad2ndiad2n",
+      "type": "PLANAR",
+      "jsonUrl": "/image-targets/gemini_generated_image_ad2ndiad2ndiad2n.json",
+      "imagePath": "image-targets/gemini_generated_image_ad2ndiad2ndiad2n_luminance.png",
+      "imageUrl": "/image-targets/gemini_generated_image_ad2ndiad2ndiad2n_luminance.png",
+      "thumbnailUrl": "/image-targets/gemini_generated_image_ad2ndiad2ndiad2n_thumbnail.png",
+      "loadAutomatically": false,
+      "metadata": null,
+      "resources": {
+        "originalImage": "image-targets/gemini_generated_image_ad2ndiad2ndiad2n_original.png",
+        "croppedImage": "image-targets/gemini_generated_image_ad2ndiad2ndiad2n_cropped.png",
+        "thumbnailImage": "image-targets/gemini_generated_image_ad2ndiad2ndiad2n_thumbnail.png",
+        "luminanceImage": "image-targets/gemini_generated_image_ad2ndiad2ndiad2n_luminance.png"
+      },
+      "properties": {
+        "top": 0,
+        "left": 0,
+        "width": 1792,
+        "height": 2389,
+        "originalWidth": 1792,
+        "originalHeight": 2390
+      }
+    },
+    {
+      "name": "poster2",
+      "type": "PLANAR",
+      "jsonUrl": "/image-targets/poster2.json",
+      "imagePath": "image-targets/poster2_luminance.png",
+      "imageUrl": "/image-targets/poster2_luminance.png",
+      "thumbnailUrl": "/image-targets/poster2_thumbnail.png",
+      "loadAutomatically": false,
+      "metadata": null,
+      "resources": {
+        "originalImage": "image-targets/poster2_original.png",
+        "croppedImage": "image-targets/poster2_cropped.png",
+        "thumbnailImage": "image-targets/poster2_thumbnail.png",
+        "luminanceImage": "image-targets/poster2_luminance.png"
+      },
+      "properties": {
+        "top": 0,
+        "left": 45,
+        "width": 1200,
+        "height": 1601,
+        "originalWidth": 1290,
+        "originalHeight": 1601
+      }
+    },
+    {
+      "name": "poster3",
+      "type": "PLANAR",
+      "jsonUrl": "/image-targets/poster3.json",
+      "imagePath": "image-targets/poster3_luminance.png",
+      "imageUrl": "/image-targets/poster3_luminance.png",
+      "thumbnailUrl": "/image-targets/poster3_thumbnail.png",
+      "loadAutomatically": false,
+      "metadata": null,
+      "resources": {
+        "originalImage": "image-targets/poster3_original.png",
+        "croppedImage": "image-targets/poster3_cropped.png",
+        "thumbnailImage": "image-targets/poster3_thumbnail.png",
+        "luminanceImage": "image-targets/poster3_luminance.png"
+      },
+      "properties": {
+        "top": 0,
+        "left": 0,
+        "width": 1792,
+        "height": 2389,
+        "originalWidth": 1792,
+        "originalHeight": 2390
+      }
+    }
+  ]
+}
