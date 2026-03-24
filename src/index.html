@@ -197,15 +197,14 @@
         position="0 0 0"
         rotation="0 0 0"
         scale="1 1 1"
-        portal="width: 0.74; height: 1.0">
+        portal="width: 1; height: 1.3341666667">
 
         <!-- Thin decorative frame around the portal opening -->
-        <!-- Frame: 0.74w × 1.0h opening, 1cm border -->
         <a-entity id="portal-frame">
-          <a-box id="portal-frame-left"   depth="0.04" height="1.02"  width="0.01" position="-0.375 0 0.01"  color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-right"  depth="0.04" height="1.02"  width="0.01" position="0.375 0 0.01"   color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-top"    depth="0.04" height="0.01"  width="0.76" position="0 0.505 0.01"   color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-bottom" depth="0.04" height="0.01"  width="0.76" position="0 -0.505 0.01"  color="#44506c"></a-box>
+          <a-box id="portal-frame-left"   depth="0.04" height="1.3541666667" width="0.01" position="-0.505 0 0.01" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-right"  depth="0.04" height="1.3541666667" width="0.01" position="0.505 0 0.01"  color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-top"    depth="0.04" height="0.01"         width="1.02" position="0 0.6721 0.01"  color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-bottom" depth="0.04" height="0.01"         width="1.02" position="0 -0.6721 0.01" color="#44506c"></a-box>
         </a-entity>
 
         <!--
@@ -229,26 +228,27 @@
         <a-entity id="hider-walls" data-hider-walls>
 
           <!-- ── Front face strips (z=0.005, just behind the frame) ──────────── -->
-          <!-- opening: 0.74w × 1.0h   half_w=0.37  half_h=0.5 -->
-
-          <!-- top strip: y from 0.5 to 50  → center=25.25, height=49.5 -->
-          <a-box depth="0.01" height="49.5" width="200"
-                 position="0 25.25 0.005"
+          <!-- top strip: from y=0.6670833 to y=50
+               center = (0.6670833 + 50) / 2 = 25.33354
+               height = 50 - 0.6670833 = 49.33292 -->
+          <a-box depth="0.01" height="49.33292" width="200"
+                 position="0 25.33354 0.005"
                  depth-mask></a-box>
 
-          <!-- bottom strip: y from -50 to -0.5  → center=-25.25, height=49.5 -->
-          <a-box depth="0.01" height="49.5" width="200"
-                 position="0 -25.25 0.005"
+          <!-- bottom strip: from y=-50 to y=-0.6670833
+               center = (-50 + -0.6670833) / 2 = -25.33354 -->
+          <a-box depth="0.01" height="49.33292" width="200"
+                 position="0 -25.33354 0.005"
                  depth-mask></a-box>
 
-          <!-- left panel: x from -100 to -0.37  → center=-50.185, width=99.63 -->
-          <a-box depth="0.01" height="1.0" width="99.63"
-                 position="-50.185 0 0.005"
+          <!-- left panel: full height band, x < -0.5 -->
+          <a-box depth="0.01" height="1.3341666667" width="99"
+                 position="-50 0 0.005"
                  depth-mask></a-box>
 
-          <!-- right panel: x from 0.37 to 100  → center=50.185, width=99.63 -->
-          <a-box depth="0.01" height="1.0" width="99.63"
-                 position="50.185 0 0.005"
+          <!-- right panel: full height band, x > 0.5 -->
+          <a-box depth="0.01" height="1.3341666667" width="99"
+                 position="50 0 0.005"
                  depth-mask></a-box>
 
           <!-- ── Enclosure (surrounds the 3D content at z <= 0) ────────────── -->

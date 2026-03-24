@@ -1,6 +1,4 @@
-// Physical poster dimensions: 74cm wide × 100cm tall
-const TARGET_WIDTH  = 0.74
-const TARGET_HEIGHT = 1.0
+const TARGET_HEIGHT = 1601 / 1200
 
 const registerComponent = (name, definition) => {
   if (!window.AFRAME || window.AFRAME.components[name]) {
@@ -97,7 +95,7 @@ registerComponent('bob', {
 // User is ALWAYS outside the portal (never walks through).
 registerComponent('portal', {
   schema: {
-    width:  {default: TARGET_WIDTH},
+    width:  {default: 1},
     height: {default: TARGET_HEIGHT},
   },
 
