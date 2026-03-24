@@ -96,22 +96,91 @@ registerComponent('portal', {
   },
 
   init() {
-    // Always-outside mode: user always views portal from the front.
-    // Contents visible (seen through opening), occlusion walls active,
-    // portal-wall depth-mask off (only needed for "inside looking out").
-    this.contents = this.el.querySelector('[data-portal-contents]')
-    this.walls = this.el.querySelector('[data-hider-walls]')
+    const {THREE} = window
+    this.THREE = THREE
     this.portalWall = this.el.querySelector('[data-portal-wall]')
+    this.contents = this.el.querySelector('[data-portal-contents]')
 
-    const apply = () => {
-      if (this.contents) this.contents.object3D.visible = true
-      if (this.walls) this.walls.object3D.visible = true
-      if (this.portalWall) this.portalWall.object3D.visible = false
+    // ── Stencil-based portal ──
+    // 1. The portal-wall plane writes stencil=1 (no color, no depth)
+    // 2. All portal content only renders where stencil=1 (the opening)
+    // 3. Outside the opening → camera feed shows through (no 3D)
+
+    this._setupStencilMask()
+
+    if (this.contents) {
+      this.contents.object3D.visible = true
     }
 
-    // Apply immediately and also after scene loads (in case objects aren't ready yet)
-    apply()
-    this.el.sceneEl.addEventListener('loaded', apply)
+    // Apply stencil test to content meshes (multiple attempts for async loading)
+    const applyStencil = () => this._applyStencilToContents()
+
+    const cityEl = this.el.querySelector('#portal-city')
+    if (cityEl) {
+      cityEl.addEventListener('model-loaded', applyStencil)
+    }
+
+    this.el.sceneEl.addEventListener('loaded', () => {
+      applyStencil()
+      setTimeout(applyStencil, 500)
+      setTimeout(applyStencil, 2000)
+      setTimeout(applyStencil, 5000)
+    })
+  },
+
+  _setupStencilMask() {
+    if (!this.portalWall) return
+    const {THREE} = this
+
+    const applyMask = () => {
+      const mesh = this.portalWall.getObject3D('mesh')
+      if (!mesh) return false
+
+      mesh.traverse((obj) => {
+        if (obj.isMesh) {
+          obj.material = new THREE.MeshBasicMaterial({
+            colorWrite: false,
+            depthWrite: false,
+            stencilWrite: true,
+            stencilRef: 1,
+            stencilFunc: THREE.AlwaysStencilFunc,
+            stencilZPass: THREE.ReplaceStencilOp,
+            stencilFail: THREE.KeepStencilOp,
+            stencilZFail: THREE.KeepStencilOp,
+          })
+          obj.renderOrder = -1
+          obj.frustumCulled = false
+        }
+      })
+
+      this.portalWall.object3D.visible = true
+      return true
+    }
+
+    if (!applyMask()) {
+      this.portalWall.addEventListener('object3dset', () => applyMask())
+    }
+  },
+
+  _applyStencilToContents() {
+    if (!this.contents) return
+    const {THREE} = this
+
+    this.contents.object3D.traverse((obj) => {
+      if (obj.isMesh && obj.material) {
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material]
+        mats.forEach((mat) => {
+          mat.stencilWrite = true
+          mat.stencilRef = 1
+          mat.stencilFunc = THREE.EqualStencilFunc
+          mat.stencilFail = THREE.KeepStencilOp
+          mat.stencilZFail = THREE.KeepStencilOp
+          mat.stencilZPass = THREE.KeepStencilOp
+          mat.needsUpdate = true
+        })
+        obj.renderOrder = 1
+      }
+    })
   },
 })
 

@@ -206,22 +206,13 @@
           <a-box id="portal-frame-bottom" depth="0.04" height="0.01" width="1.02" position="0 -0.6721 0.01" color="#44506c"></a-box>
         </a-entity>
 
-        <a-entity id="hider-walls" data-hider-walls>
-          <!-- Front mask: 4 huge planes around the 1.0 x 1.334 opening, covering full viewport.
-               No back/side walls — they were blocking the sky sphere and content behind the opening. -->
-          <a-plane id="hider-front-top" width="200" height="100" position="0 50.667 0" depth-mask></a-plane>
-          <a-plane id="hider-front-bottom" width="200" height="100" position="0 -50.667 0" depth-mask></a-plane>
-          <a-plane id="hider-front-left" width="100" height="1.3341666667" position="-50.5 0 0" depth-mask></a-plane>
-          <a-plane id="hider-front-right" width="100" height="1.3341666667" position="50.5 0 0" depth-mask></a-plane>
-        </a-entity>
-
+        <!-- Stencil mask plane – the portal component sets up the stencil material -->
         <a-plane
           id="portal-wall"
           data-portal-wall
           width="1"
           height="1.3341666667"
-          position="0 0 0.01"
-          depth-mask>
+          position="0 0 0.01">
         </a-plane>
 
         <a-entity id="portal-contents" data-portal-contents>
