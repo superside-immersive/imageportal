@@ -285,7 +285,8 @@
             position="2.5 3.8 1.5">
           </a-entity>
 
-          <a-sphere id="portal-sky" radius="14" segments-width="20" segments-height="18" position="0 0 -1" material="shader: flat; side: back; color: #15203b"></a-sphere>
+          <!-- radius=12, center at z=-13 → sphere front edge at z=-1, fully behind the portal plane (z=0) so hider-walls block it correctly -->
+          <a-sphere id="portal-sky" radius="12" segments-width="20" segments-height="18" position="0 0 -13" material="shader: flat; side: back; color: #15203b"></a-sphere>
           <a-circle id="portal-floor" radius="4" rotation="-90 0 0" position="0 -1.08 -1.7" material="color: #223150; opacity: 0.92"></a-circle>
 
           <a-entity
