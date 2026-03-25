@@ -8,6 +8,7 @@ const compatibilityEl = document.getElementById('compatibility')
 const editorMode =
   window.location.pathname.endsWith('/editor.html') ||
   new URLSearchParams(window.location.search).has('editor')
+const statsMode = new URLSearchParams(window.location.search).has('stats')
 
 const DEFAULT_PORTAL_SCALE = 0.76
 
@@ -102,6 +103,10 @@ const loadPortalEditorModule = async () => import('./portal/portal-editor')
 
 const startReality = async () => {
   await waitForSceneLoad()
+
+  if (statsMode && sceneEl) {
+    sceneEl.setAttribute('stats', '')
+  }
 
   const portalRootEl = document.getElementById('portal-root')
   if (portalRootEl) {

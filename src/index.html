@@ -159,7 +159,6 @@
   </div>
 
   <a-scene
-    stats
     renderer="antialias: false; colorManagement: true; physicallyCorrectLights: false; precision: mediump"
     xrweb="allowedDevices: any; disableWorldTracking: true; disableDefaultEnvironment: true; delayRun: true"
     loading-screen="enabled: false"
@@ -261,21 +260,15 @@
 
         <!-- 3D portal content – visible only through the opening left by the hider walls -->
         <a-entity id="portal-contents" data-portal-contents>
-          <a-entity id="portal-ambient-light" light="type: ambient; intensity: 1; color: #f0f7ff"></a-entity>
-          <a-entity
-            id="portal-key-light"
-            light="type: directional; intensity: 0.55; castShadow: false"
-            position="2.5 3.8 1.5">
-          </a-entity>
-
           <!-- radius=12, center at z=-13 → sphere front edge at z=-1, fully behind the portal plane (z=0) so hider-walls block it correctly -->
-          <a-sphere id="portal-sky" radius="12" segments-width="14" segments-height="12" position="0 0 -13" material="shader: flat; side: back; color: #8fd8ff"></a-sphere>
+          <a-sphere id="portal-sky" radius="12" segments-width="10" segments-height="8" position="0 0 -13" material="shader: flat; side: back; color: #8fd8ff"></a-sphere>
           <!-- radius=4, center at z=-5 → front edge at z=-1, fully behind z=0 -->
           <a-circle id="portal-floor" radius="4" rotation="-90 0 0" position="0 -1.08 -5" material="color: #223150; opacity: 0.92"></a-circle>
 
           <a-entity
             id="portal-city"
             gltf-model="#cityModel"
+            unlit-model
             position="0 -0.93 0"
             rotation="0 270 0"
             scale="0.12 0.12 0.12">
