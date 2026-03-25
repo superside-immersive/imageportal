@@ -17,6 +17,7 @@ const PORTAL_SCALE_STORAGE_KEY = 'imageportal.portalScale'
 const DEFAULT_PORTAL_SCALE = 1
 const MIN_PORTAL_SCALE = 0.75
 const MAX_PORTAL_SCALE = 1.15
+let portalScaleControlAttached = false
 
 const clampPortalScale = (value) => {
   const numeric = Number(value)
@@ -30,11 +31,39 @@ const clampPortalScale = (value) => {
 
 const formatPortalScale = (value) => clampPortalScale(value).toFixed(2)
 
+const readCurrentPortalScale = () => {
+  if (!portalRootEl) {
+    return DEFAULT_PORTAL_SCALE
+  }
+
+  const objectScale = portalRootEl.object3D?.scale?.x
+  if (Number.isFinite(objectScale) && objectScale > 0) {
+    return clampPortalScale(objectScale)
+  }
+
+  const attributeScale = portalRootEl.getAttribute('scale')
+  if (typeof attributeScale === 'object' && attributeScale?.x) {
+    return clampPortalScale(attributeScale.x)
+  }
+
+  if (typeof attributeScale === 'string') {
+    const [x] = attributeScale.split(/\s+/)
+    return clampPortalScale(x)
+  }
+
+  return DEFAULT_PORTAL_SCALE
+}
+
 const applyPortalScale = (value, {persist = true} = {}) => {
   const scale = clampPortalScale(value)
 
   if (portalRootEl) {
     portalRootEl.setAttribute('scale', `${scale} ${scale} ${scale}`)
+    if (portalRootEl.object3D) {
+      portalRootEl.object3D.scale.set(scale, scale, scale)
+      portalRootEl.object3D.updateMatrix()
+      portalRootEl.object3D.updateMatrixWorld(true)
+    }
   }
 
   if (portalScaleInputEl && portalScaleInputEl.value !== String(scale)) {
@@ -135,11 +164,16 @@ const attachUiListeners = () => {
 }
 
 const attachScaleControl = () => {
-  const initialScale = applyPortalScale(loadPortalScale(), {persist: false})
+  const savedScale = loadPortalScale()
+  const initialScale = applyPortalScale(savedScale || readCurrentPortalScale(), {persist: false})
 
-  if (portalScaleInputEl) {
+  if (portalScaleInputEl && !portalScaleControlAttached) {
+    portalScaleControlAttached = true
     portalScaleInputEl.value = String(initialScale)
     portalScaleInputEl.addEventListener('input', (event) => {
+      applyPortalScale(event.target.value)
+    })
+    portalScaleInputEl.addEventListener('change', (event) => {
       applyPortalScale(event.target.value)
     })
   }
@@ -159,9 +193,8 @@ const waitForSceneLoad = () => new Promise((resolve) => {
 const startReality = async () => {
   await waitForSceneLoad()
 
-  attachScaleControl()
-
   applySavedPortalEditorState()
+  attachScaleControl()
 
   if (editorMode) {
     enablePortalEditorMode({sceneEl, setStatus, setCompatibility})
