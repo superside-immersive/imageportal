@@ -207,75 +207,54 @@
           <a-box id="portal-frame-bottom" depth="0.04" height="0.01"         width="1.02" position="0 -0.6721 0.01" color="#44506c"></a-box>
         </a-entity>
 
-        <!--
-          HIDER WALLS – 8th Wall depth-occlusion technique.
-          Each box uses depth-mask (colorWrite:false, depthWrite:true, renderOrder:-1).
-          They are invisible but write to the depth buffer, blocking all 3D content
-          behind them.  The only gap is the portal opening (1.0 × 1.3341666667 m).
-
-          All positions are in the image-target's local coordinate space (+Z = toward camera).
-          Content is placed at negative Z (behind the target plane).
-
-          FRONT FACE – 4 strips forming the wall with the rectangular opening:
-            - top strip    (above the opening)
-            - bottom strip (below the opening)
-            - left panel   (left of the opening)
-            - right panel  (right of the opening)
-
-          ENCLOSURE (behind the target, surrounds the 3D content):
-            - back wall, ceiling, floor, left side, right side
-        -->
+         <!--
+           HIDER WALLS – optimized plane-based shell.
+           Same rectangular opening and enclosure behavior as before, but using
+           lighter geometry and a tighter volume around the portal content.
+         -->
         <a-entity id="hider-walls" data-hider-walls>
 
-          <!-- ── Front face strips (z=0.005, just behind the frame) ──────────── -->
-          <!-- top strip: from y=0.6670833 to y=50
-               center = (0.6670833 + 50) / 2 = 25.33354
-               height = 50 - 0.6670833 = 49.33292 -->
-          <a-box depth="0.01" height="49.33292" width="200"
-                 position="0 25.33354 0.005"
-                 depth-mask></a-box>
+           <!-- Front opening strips -->
+           <a-plane width="28" height="13.33292"
+               position="0 7.33354 0.005"
+               depth-mask></a-plane>
 
-          <!-- bottom strip: from y=-50 to y=-0.6670833
-               center = (-50 + -0.6670833) / 2 = -25.33354 -->
-          <a-box depth="0.01" height="49.33292" width="200"
-                 position="0 -25.33354 0.005"
-                 depth-mask></a-box>
+           <a-plane width="28" height="13.33292"
+               position="0 -7.33354 0.005"
+               depth-mask></a-plane>
 
-          <!-- left panel: full height band, x < -0.5 -->
-          <a-box depth="0.01" height="1.3341666667" width="99"
-                 position="-50 0 0.005"
-                 depth-mask></a-box>
+           <a-plane width="13.5" height="1.3341666667"
+               position="-7.25 0 0.005"
+               depth-mask></a-plane>
 
-          <!-- right panel: full height band, x > 0.5 -->
-          <a-box depth="0.01" height="1.3341666667" width="99"
-                 position="50 0 0.005"
-                 depth-mask></a-box>
+           <a-plane width="13.5" height="1.3341666667"
+               position="7.25 0 0.005"
+               depth-mask></a-plane>
 
-          <!-- ── Enclosure (surrounds the 3D content at z <= 0) ────────────── -->
-          <!-- back wall -->
-          <a-box depth="0.01" height="200" width="200"
-                 position="0 0 -100"
-                 depth-mask></a-box>
+           <!-- Tight enclosure behind the portal -->
+           <a-plane width="28" height="28"
+               position="0 0 -26"
+               depth-mask></a-plane>
 
-          <!-- ceiling -->
-          <a-box depth="200" height="0.01" width="200"
-                 position="0 50 -50"
-                 depth-mask></a-box>
+           <a-plane width="26" height="28"
+               position="-14 0 -13"
+               rotation="0 90 0"
+               depth-mask></a-plane>
 
-          <!-- floor -->
-          <a-box depth="200" height="0.01" width="200"
-                 position="0 -50 -50"
-                 depth-mask></a-box>
+           <a-plane width="26" height="28"
+               position="14 0 -13"
+               rotation="0 -90 0"
+               depth-mask></a-plane>
 
-          <!-- left side -->
-          <a-box depth="200" height="200" width="0.01"
-                 position="-100 0 -50"
-                 depth-mask></a-box>
+           <a-plane width="28" height="26"
+               position="0 14 -13"
+               rotation="90 0 0"
+               depth-mask></a-plane>
 
-          <!-- right side -->
-          <a-box depth="200" height="200" width="0.01"
-                 position="100 0 -50"
-                 depth-mask></a-box>
+           <a-plane width="28" height="26"
+               position="0 -14 -13"
+               rotation="-90 0 0"
+               depth-mask></a-plane>
 
         </a-entity>
 
@@ -293,7 +272,14 @@
           <!-- radius=4, center at z=-5 → front edge at z=-1, fully behind z=0 -->
           <a-circle id="portal-floor" radius="4" rotation="-90 0 0" position="0 -1.08 -5" material="color: #223150; opacity: 0.92"></a-circle>
 
-          <!-- GLB temporarily disabled for performance profiling -->
+          <a-box
+            id="portal-placeholder"
+            width="0.7"
+            height="0.7"
+            depth="0.7"
+            position="0 -0.3170833333 -2"
+            material="shader: flat; color: #ff3b30">
+          </a-box>
 
           <a-sphere
             id="portal-orb"
