@@ -46,6 +46,11 @@ const config = {
           to: path.join(distPath, 'image-targets', '[name][ext]'),
           noErrorOnMissing: true,
         },
+        {
+          from: path.join(rootPath, 'citylight.glb'),
+          to: path.join(distPath, 'assets', 'citylight.glb'),
+          noErrorOnMissing: true,
+        },
       ],
     }),
   ],
