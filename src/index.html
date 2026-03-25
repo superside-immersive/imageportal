@@ -165,7 +165,7 @@
     background="color: #05070f">
 
     <a-assets timeout="20000">
-      <a-asset-item id="cityModel" src="./assets/city.glb"></a-asset-item>
+      <a-asset-item id="cityModel" src="./assets/citylow.glb"></a-asset-item>
       <img id="poster2Reference" src="./image-targets/poster2_original.png" alt="Poster 2 reference">
     </a-assets>
 
@@ -293,14 +293,13 @@
           <!-- radius=4, center at z=-5 → front edge at z=-1, fully behind z=0 -->
           <a-circle id="portal-floor" radius="4" rotation="-90 0 0" position="0 -1.08 -5" material="color: #223150; opacity: 0.92"></a-circle>
 
-          <!-- GLB temporarily disabled for performance testing -->
-          <!-- <a-entity
+          <a-entity
             id="portal-city"
             gltf-model="#cityModel"
             position="0 -0.93 0"
             rotation="0 270 0"
             scale="0.12 0.12 0.12">
-          </a-entity> -->
+          </a-entity>
 
           <a-sphere
             id="portal-orb"
