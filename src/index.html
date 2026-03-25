@@ -199,64 +199,14 @@
         scale="0.76 0.76 0.76"
         portal="width: 1; height: 1.3341666667">
 
-        <!-- Thin decorative frame around the portal opening -->
-        <a-entity id="portal-frame">
-          <a-box id="portal-frame-left"   depth="0.04" height="1.3541666667" width="0.01" position="-0.505 0 0.01" color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-right"  depth="0.04" height="1.3541666667" width="0.01" position="0.505 0 0.01"  color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-top"    depth="0.04" height="0.01"         width="1.02" position="0 0.6721 0.01"  color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-bottom" depth="0.04" height="0.01"         width="1.02" position="0 -0.6721 0.01" color="#44506c"></a-box>
-        </a-entity>
+        <!-- Thin decorative frame – merged into 1 draw call -->
+        <a-entity id="portal-frame" merged-portal-frame></a-entity>
 
          <!--
-           HIDER WALLS – optimized plane-based shell.
-           Same rectangular opening and enclosure behavior as before, but using
-           lighter geometry and a tighter volume around the portal content.
+           HIDER WALLS – merged into 1 draw call.
+           Same rectangular opening and enclosure behavior as before.
          -->
-        <a-entity id="hider-walls" data-hider-walls>
-
-           <!-- Front opening strips -->
-           <a-plane width="28" height="13.33292"
-               position="0 7.33354 0.005"
-               depth-mask></a-plane>
-
-           <a-plane width="28" height="13.33292"
-               position="0 -7.33354 0.005"
-               depth-mask></a-plane>
-
-           <a-plane width="13.5" height="1.3341666667"
-               position="-7.25 0 0.005"
-               depth-mask></a-plane>
-
-           <a-plane width="13.5" height="1.3341666667"
-               position="7.25 0 0.005"
-               depth-mask></a-plane>
-
-           <!-- Tight enclosure behind the portal -->
-           <a-plane width="28" height="28"
-               position="0 0 -26"
-               depth-mask></a-plane>
-
-           <a-plane width="26" height="28"
-               position="-14 0 -13"
-               rotation="0 90 0"
-               depth-mask></a-plane>
-
-           <a-plane width="26" height="28"
-               position="14 0 -13"
-               rotation="0 -90 0"
-               depth-mask></a-plane>
-
-           <a-plane width="28" height="26"
-               position="0 14 -13"
-               rotation="90 0 0"
-               depth-mask></a-plane>
-
-           <a-plane width="28" height="26"
-               position="0 -14 -13"
-               rotation="-90 0 0"
-               depth-mask></a-plane>
-
-        </a-entity>
+        <a-entity id="hider-walls" data-hider-walls merged-hider-walls></a-entity>
 
         <!-- 3D portal content – visible only through the opening left by the hider walls -->
         <a-entity id="portal-contents" data-portal-contents>
