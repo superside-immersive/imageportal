@@ -88,9 +88,14 @@ const applyPortalScale = (value, {persist = true} = {}) => {
 const loadPortalScale = () => {
   try {
     const stored = window.localStorage.getItem(PORTAL_SCALE_STORAGE_KEY)
-    return clampPortalScale(stored ?? DEFAULT_PORTAL_SCALE)
+
+    if (stored == null) {
+      return null
+    }
+
+    return clampPortalScale(stored)
   } catch (error) {
-    return DEFAULT_PORTAL_SCALE
+    return null
   }
 }
 
@@ -165,7 +170,8 @@ const attachUiListeners = () => {
 
 const attachScaleControl = () => {
   const savedScale = loadPortalScale()
-  const initialScale = applyPortalScale(savedScale || readCurrentPortalScale(), {persist: false})
+  const currentScale = readCurrentPortalScale()
+  const initialScale = applyPortalScale(savedScale ?? currentScale, {persist: false})
 
   if (portalScaleInputEl && !portalScaleControlAttached) {
     portalScaleControlAttached = true
@@ -216,6 +222,7 @@ const startReality = async () => {
   sceneEl.emit('runreality')
 }
 
+attachScaleControl()
 attachUiListeners()
 
 if (window.XR8) {
