@@ -1,5 +1,9 @@
 const TARGET_HEIGHT = 1601 / 1200
 
+const POSITION_EPSILON = 0.0001
+const SCALE_EPSILON = 0.0001
+const QUATERNION_DOT_EPSILON = 0.99999
+
 const registerComponent = (name, definition) => {
   if (!window.AFRAME || window.AFRAME.components[name]) {
     return
@@ -188,14 +192,22 @@ registerComponent('portal', {
 registerComponent('image-target-anchor', {
   schema: {
     name: {type: 'string', default: 'poster2'},
+    positionSmoothing: {default: 0.18},
+    rotationSmoothing: {default: 0.16},
+    scaleSmoothing: {default: 0.2},
   },
 
   init() {
+    const {THREE} = window
+
     this.onTracked = this.onTracked.bind(this)
     this.onLost = this.onLost.bind(this)
     this.onCameraStatus = this.onCameraStatus.bind(this)
     this.previewEnabled = !new URLSearchParams(window.location.search).has('noDesktopPreview')
     this.hasTrackedPose = false
+    this.targetPosition = new THREE.Vector3()
+    this.targetQuaternion = new THREE.Quaternion()
+    this.targetScale = new THREE.Vector3(1, 1, 1)
 
     this.el.object3D.visible = false
     this.el.sceneEl.addEventListener('xrimagefound', this.onTracked)
@@ -216,14 +228,44 @@ registerComponent('image-target-anchor', {
     const rotation = detail.rotation || {x: 0, y: 0, z: 0, w: 1}
     const scale = detail.scale || 1
 
-    // Apply pose directly – no per-frame smoothing (matches 8th Wall reference behavior)
-    object3D.position.set(position.x, position.y, position.z)
-    object3D.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w)
-    const s = scale || 1
-    object3D.scale.set(s, s, s)
+    this.targetPosition.set(position.x, position.y, position.z)
+    this.targetQuaternion.set(rotation.x, rotation.y, rotation.z, rotation.w)
+    this.targetScale.set(scale, scale, scale)
 
-    this.hasTrackedPose = true
+    if (!this.hasTrackedPose) {
+      object3D.position.copy(this.targetPosition)
+      object3D.quaternion.copy(this.targetQuaternion)
+      object3D.scale.copy(this.targetScale)
+      this.hasTrackedPose = true
+    }
+
     object3D.visible = true
+  },
+
+  tick() {
+    const {object3D} = this.el
+
+    if (!this.hasTrackedPose || !object3D.visible) {
+      return
+    }
+
+    if (object3D.position.distanceToSquared(this.targetPosition) > POSITION_EPSILON) {
+      object3D.position.lerp(this.targetPosition, this.data.positionSmoothing)
+    } else {
+      object3D.position.copy(this.targetPosition)
+    }
+
+    if (Math.abs(object3D.quaternion.dot(this.targetQuaternion)) < QUATERNION_DOT_EPSILON) {
+      object3D.quaternion.slerp(this.targetQuaternion, this.data.rotationSmoothing)
+    } else {
+      object3D.quaternion.copy(this.targetQuaternion)
+    }
+
+    if (object3D.scale.distanceToSquared(this.targetScale) > SCALE_EPSILON) {
+      object3D.scale.lerp(this.targetScale, this.data.scaleSmoothing)
+    } else {
+      object3D.scale.copy(this.targetScale)
+    }
   },
 
   onLost(event) {
