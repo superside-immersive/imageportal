@@ -88,6 +88,76 @@ registerComponent('bob', {
   },
 })
 
+registerComponent('fit-model', {
+  schema: {
+    alignBottom: {default: 0},
+    alignFront: {default: 0},
+    centerX: {default: true},
+  },
+
+  init() {
+    this.fit = this.fit.bind(this)
+    this.el.addEventListener('model-loaded', this.fit)
+    this.el.addEventListener('object3dset', this.fit)
+  },
+
+  fit() {
+    const {THREE} = window
+    const model = this.el.getObject3D('mesh')
+    const parent = this.el.object3D.parent
+
+    if (!THREE || !model || !parent) {
+      return
+    }
+
+    this.el.object3D.position.set(0, 0, 0)
+    this.el.object3D.updateMatrixWorld(true)
+    parent.updateMatrixWorld(true)
+
+    const parentInverse = new THREE.Matrix4().copy(parent.matrixWorld).invert()
+    const bounds = new THREE.Box3()
+
+    model.traverse((object) => {
+      if (!object.isMesh || !object.geometry) {
+        return
+      }
+
+      if (!object.geometry.boundingBox) {
+        object.geometry.computeBoundingBox()
+      }
+
+      if (!object.geometry.boundingBox) {
+        return
+      }
+
+      const nextBounds = object.geometry.boundingBox.clone()
+      const relativeMatrix = new THREE.Matrix4().multiplyMatrices(parentInverse, object.matrixWorld)
+      nextBounds.applyMatrix4(relativeMatrix)
+      bounds.union(nextBounds)
+    })
+
+    if (bounds.isEmpty()) {
+      return
+    }
+
+    const center = bounds.getCenter(new THREE.Vector3())
+    const nextPosition = new THREE.Vector3(
+      this.data.centerX ? -center.x : 0,
+      this.data.alignBottom - bounds.min.y,
+      this.data.alignFront - bounds.max.z
+    )
+
+    this.el.object3D.position.copy(nextPosition)
+    this.el.object3D.updateMatrix()
+    this.el.object3D.updateMatrixWorld(true)
+  },
+
+  remove() {
+    this.el.removeEventListener('model-loaded', this.fit)
+    this.el.removeEventListener('object3dset', this.fit)
+  },
+})
+
 // Portal component – uses the 8th Wall hider-walls depth-occlusion approach:
 // hider-walls (depth-mask material, colorWrite:false, depthWrite:true) form a closed box
 // around the camera with exactly one rectangular opening (the image target).
