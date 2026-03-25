@@ -122,85 +122,6 @@
       color: var(--accent);
     }
 
-    .portal-scale-panel {
-      position: fixed;
-      right: 16px;
-      bottom: 16px;
-      z-index: 25;
-      width: min(320px, calc(100vw - 32px));
-      padding: 12px 14px 14px;
-      border: 1px solid var(--panel-border);
-      border-radius: 16px;
-      background: rgba(6, 10, 22, 0.82);
-      backdrop-filter: blur(18px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
-      color: var(--text);
-    }
-
-    .portal-scale-panel .label-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-
-    .portal-scale-panel label {
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      color: var(--text);
-    }
-
-    .portal-scale-panel output {
-      min-width: 3.5rem;
-      text-align: right;
-      font-size: 0.85rem;
-      color: var(--accent);
-    }
-
-    .portal-scale-panel input[type="range"] {
-      width: 100%;
-      margin: 0;
-      appearance: none;
-      -webkit-appearance: none;
-      background: transparent;
-      cursor: pointer;
-    }
-
-    .portal-scale-panel input[type="range"]::-webkit-slider-runnable-track {
-      height: 4px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(138, 180, 255, 0.32), rgba(138, 180, 255, 0.9));
-    }
-
-    .portal-scale-panel input[type="range"]::-webkit-slider-thumb {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 14px;
-      height: 14px;
-      margin-top: -5px;
-      border: 2px solid #eaf1ff;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(138, 180, 255, 0.14);
-    }
-
-    .portal-scale-panel input[type="range"]::-moz-range-track {
-      height: 4px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, rgba(138, 180, 255, 0.32), rgba(138, 180, 255, 0.9));
-    }
-
-    .portal-scale-panel input[type="range"]::-moz-range-thumb {
-      width: 14px;
-      height: 14px;
-      border: 2px solid #eaf1ff;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(138, 180, 255, 0.14);
-    }
-
     @media (max-width: 900px) {
       .hud {
         flex-direction: column;
@@ -235,22 +156,6 @@
         <span>Usá <strong>poster2</strong> para disparar el portal. En desktop queda visible como preview para inspección.</span>
       </div>
     </div>
-  </div>
-
-  <div class="portal-scale-panel">
-    <div class="label-row">
-      <label for="portal-scale">Escala del portal</label>
-      <output id="portal-scale-value" for="portal-scale">1.00</output>
-    </div>
-    <input
-      id="portal-scale"
-      type="range"
-      min="0.75"
-      max="1.15"
-      step="0.01"
-      value="1"
-      aria-label="Escala del portal">
-    <p style="margin-top:8px;font-size:0.78rem;line-height:1.35;color:var(--muted);">Mové el fader y decime el valor que te queda para dejarlo fijo.</p>
   </div>
 
   <a-scene
@@ -291,7 +196,7 @@
         id="portal-root"
         position="0 0 0"
         rotation="0 0 0"
-        scale="1 1 1"
+        scale="0.76 0.76 0.76"
         portal="width: 1; height: 1.3341666667">
 
         <!-- Thin decorative frame around the portal opening -->
