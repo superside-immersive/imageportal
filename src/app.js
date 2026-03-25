@@ -1,5 +1,4 @@
 import './portal/portal-components'
-import {applySavedPortalEditorState, enablePortalEditorMode} from './portal/portal-editor'
 
 const poster2Target = require('../image-targets copy/poster2.json')
 
@@ -90,10 +89,10 @@ const waitForSceneLoad = () => new Promise((resolve) => {
   sceneEl.addEventListener('loaded', resolve, {once: true})
 })
 
+const loadPortalEditorModule = async () => import('./portal/portal-editor')
+
 const startReality = async () => {
   await waitForSceneLoad()
-
-  applySavedPortalEditorState()
 
   const portalRootEl = document.getElementById('portal-root')
   if (portalRootEl) {
@@ -106,6 +105,8 @@ const startReality = async () => {
   }
 
   if (editorMode) {
+    const {applySavedPortalEditorState, enablePortalEditorMode} = await loadPortalEditorModule()
+    applySavedPortalEditorState()
     enablePortalEditorMode({sceneEl, setStatus, setCompatibility})
     return
   }
