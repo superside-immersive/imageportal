@@ -88,6 +88,53 @@ registerComponent('bob', {
   },
 })
 
+registerComponent('offset-loaded-model', {
+  schema: {
+    alignBottom: {default: 0},
+    alignFront: {default: 0},
+    centerX: {default: true},
+  },
+
+  init() {
+    this.offsetModel = this.offsetModel.bind(this)
+    this.el.addEventListener('model-loaded', this.offsetModel)
+    this.el.addEventListener('object3dset', this.offsetModel)
+  },
+
+  offsetModel() {
+    const {THREE} = window
+    const model = this.el.getObject3D('mesh')
+
+    if (!THREE || !model) {
+      return
+    }
+
+    model.position.set(0, 0, 0)
+    model.updateMatrixWorld(true)
+
+    const bounds = new THREE.Box3().setFromObject(model)
+    if (bounds.isEmpty()) {
+      return
+    }
+
+    const center = bounds.getCenter(new THREE.Vector3())
+    const nextPosition = new THREE.Vector3(
+      this.data.centerX ? -center.x : 0,
+      this.data.alignBottom - bounds.min.y,
+      this.data.alignFront - bounds.max.z
+    )
+
+    model.position.copy(nextPosition)
+    model.updateMatrix()
+    model.updateMatrixWorld(true)
+  },
+
+  remove() {
+    this.el.removeEventListener('model-loaded', this.offsetModel)
+    this.el.removeEventListener('object3dset', this.offsetModel)
+  },
+})
+
 // Portal component – uses the 8th Wall hider-walls depth-occlusion approach:
 // hider-walls (depth-mask material, colorWrite:false, depthWrite:true) form a closed box
 // around the camera with exactly one rectangular opening (the image target).

@@ -4,16 +4,16 @@ const STORAGE_KEY = 'portal-editor-config-v1'
 // phi = vertical angle in degrees from top pole (90 = horizon, <90 = above, >90 = below)
 const DEFAULT_CAMERA_VIEW = {
   target: {x: 0, y: 0, z: 0},
-  distance: 4.5,
+  distance: 16,
   theta: 0,
   phi: 75,
 }
 
 const VIEW_PRESETS = {
   reset: {...DEFAULT_CAMERA_VIEW},
-  front: {target: {x: 0, y: 0, z: 0}, distance: 4.5, theta: 0, phi: 90},
-  iso: {target: {x: 0, y: 0, z: 0}, distance: 5.5, theta: 35, phi: 70},
-  top: {target: {x: 0, y: 0, z: 0}, distance: 6, theta: 0, phi: 5},
+  front: {target: {x: 0, y: 0, z: 0}, distance: 16, theta: 0, phi: 90},
+  iso: {target: {x: 0, y: 0, z: 0}, distance: 18, theta: 35, phi: 70},
+  top: {target: {x: 0, y: 0, z: 0}, distance: 20, theta: 0, phi: 5},
 }
 
 const normalizeWheelDelta = (event) => {
