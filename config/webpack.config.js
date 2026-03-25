@@ -47,8 +47,8 @@ const config = {
           noErrorOnMissing: true,
         },
         {
-          from: path.join(rootPath, 'citylow.glb'),
-          to: path.join(distPath, 'assets', 'citylow.glb'),
+          from: path.join(rootPath, 'Untitled.glb'),
+          to: path.join(distPath, 'assets', 'Untitled.glb'),
           noErrorOnMissing: true,
         },
       ],
