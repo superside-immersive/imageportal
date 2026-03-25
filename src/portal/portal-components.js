@@ -54,7 +54,7 @@ registerComponent('depth-mask', {
 
       object.material = createDepthMaterial(this.data.debug)
       object.renderOrder = this.data.debug ? 10 : -1
-      object.frustumCulled = false
+      object.frustumCulled = !this.data.debug
     })
   },
 
@@ -85,53 +85,6 @@ registerComponent('bob', {
     const t = data.elapsed / cycle
     const y = data.initialY + Math.sin(t * Math.PI * 2) * data.distance
     el.object3D.position.y = y
-  },
-})
-
-registerComponent('offset-loaded-model', {
-  schema: {
-    alignBottom: {default: 0},
-    alignFront: {default: 0},
-    centerX: {default: true},
-  },
-
-  init() {
-    this.offsetModel = this.offsetModel.bind(this)
-    this.el.addEventListener('model-loaded', this.offsetModel)
-    this.el.addEventListener('object3dset', this.offsetModel)
-  },
-
-  offsetModel() {
-    const {THREE} = window
-    const model = this.el.getObject3D('mesh')
-
-    if (!THREE || !model) {
-      return
-    }
-
-    model.position.set(0, 0, 0)
-    model.updateMatrixWorld(true)
-
-    const bounds = new THREE.Box3().setFromObject(model)
-    if (bounds.isEmpty()) {
-      return
-    }
-
-    const center = bounds.getCenter(new THREE.Vector3())
-    const nextPosition = new THREE.Vector3(
-      this.data.centerX ? -center.x : 0,
-      this.data.alignBottom - bounds.min.y,
-      this.data.alignFront - bounds.max.z
-    )
-
-    model.position.copy(nextPosition)
-    model.updateMatrix()
-    model.updateMatrixWorld(true)
-  },
-
-  remove() {
-    this.el.removeEventListener('model-loaded', this.offsetModel)
-    this.el.removeEventListener('object3dset', this.offsetModel)
   },
 })
 

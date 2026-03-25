@@ -11,6 +11,15 @@ const editorMode =
 
 const DEFAULT_PORTAL_SCALE = 0.76
 
+const enableEditorReferenceAssets = () => {
+  const posterReferenceEl = document.getElementById('poster2Reference')
+  const posterReferenceSrc = posterReferenceEl?.dataset?.src
+
+  if (posterReferenceEl && posterReferenceSrc && posterReferenceEl.getAttribute('src') !== posterReferenceSrc) {
+    posterReferenceEl.setAttribute('src', posterReferenceSrc)
+  }
+}
+
 const setStatus = (message) => {
   if (statusEl) {
     statusEl.textContent = message
@@ -105,6 +114,7 @@ const startReality = async () => {
   }
 
   if (editorMode) {
+    enableEditorReferenceAssets()
     const {applySavedPortalEditorState, enablePortalEditorMode} = await loadPortalEditorModule()
     applySavedPortalEditorState()
     enablePortalEditorMode({sceneEl, setStatus, setCompatibility})

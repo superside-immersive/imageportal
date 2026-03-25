@@ -46,11 +46,6 @@ const config = {
           to: path.join(distPath, 'image-targets', '[name][ext]'),
           noErrorOnMissing: true,
         },
-        {
-          from: path.join(rootPath, 'Untitled.glb'),
-          to: path.join(distPath, 'assets', 'Untitled.glb'),
-          noErrorOnMissing: true,
-        },
       ],
     }),
   ],
