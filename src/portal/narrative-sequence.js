@@ -244,8 +244,9 @@ function createAnimatedLine(points, color, parent) {
   }
   geom.setAttribute('position', new THREE.BufferAttribute(drawPositions, 3))
 
-  const mat = new THREE.LineBasicMaterial({color, linewidth: 2, transparent: true, opacity: 0.8})
+  const mat = new THREE.LineBasicMaterial({color, linewidth: 2, transparent: true, opacity: 0.8, depthTest: false, depthWrite: false})
   const line = new THREE.Line(geom, mat)
+  line.renderOrder = 998
   parent.add(line)
 
   return {line, geom, mat, fullPositions}
@@ -351,9 +352,10 @@ function buildPanel(canvas, width, height) {
   const THREE = window.THREE
   const tex = new THREE.CanvasTexture(canvas)
   tex.minFilter = THREE.LinearFilter
-  const mat = new THREE.MeshBasicMaterial({map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false})
+  const mat = new THREE.MeshBasicMaterial({map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false, depthTest: false})
   const geom = new THREE.PlaneGeometry(width, height)
   const mesh = new THREE.Mesh(geom, mat)
+  mesh.renderOrder = 999
   mesh.visible = false
   return {mesh, tex, mat, geom}
 }
@@ -407,36 +409,36 @@ if (!ENABLED) {
       this.el.object3D.add(group)
       this._group = group
 
-      /* Panel definitions */
+      /* Panel definitions — positive Z = toward camera (in front of portal) */
       const panels = [
         {
           title: 'START AT HOME: ACTIVATE NATIVE APPS & SITES',
           subtitle: 'Couch Data',
           icon: iconCouchTablet,
-          pos: {x: -0.42, y: 0.35},
-          endZ: -0.15,
-          lineTarget: {x: -0.25, y: -0.15, z: -0.6},
+          pos: {x: -0.38, y: 0.32},
+          endZ: 0.18,
+          lineTarget: {x: -0.20, y: -0.10, z: -0.3},
         },
         {
           title: 'REACH SHOPPERS ON CTV, SOCIAL & PROGRAMMATIC',
           subtitle: 'The Street Data',
           icon: iconTVPhone,
-          pos: {x: 0, y: 0.1},
-          endZ: -0.25,
-          lineTarget: {x: 0, y: -0.2, z: -0.7},
+          pos: {x: 0, y: 0.08},
+          endZ: 0.14,
+          lineTarget: {x: 0, y: -0.15, z: -0.35},
         },
         {
           title: 'IMPACT THE AISLE: IN-STORE SCREENS & RETAIL MEDIA',
           subtitle: 'The Store Data',
           icon: iconCartShelf,
-          pos: {x: 0.42, y: -0.15},
-          endZ: -0.35,
-          lineTarget: {x: 0.25, y: -0.25, z: -0.8},
+          pos: {x: 0.38, y: -0.16},
+          endZ: 0.10,
+          lineTarget: {x: 0.20, y: -0.20, z: -0.4},
         },
       ]
 
-      const checkoutPos = {x: 0, y: -0.35, z: -1.0}
-      const ctaPos = {x: 0, y: 0.55, z: -0.1}
+      const checkoutPos = {x: 0, y: -0.32, z: -0.5}
+      const ctaPos = {x: 0, y: 0.52, z: 0.22}
 
       const panelWidth = 0.52
       const panelHeight = 0.195
@@ -445,7 +447,7 @@ if (!ENABLED) {
       const built = panels.map((p) => {
         const canvas = createPanelCanvas(p.title, p.subtitle, p.icon)
         const panel = buildPanel(canvas, panelWidth, panelHeight)
-        panel.mesh.position.set(p.pos.x, p.pos.y, -1.5) // start deep inside portal
+        panel.mesh.position.set(p.pos.x, p.pos.y, -0.5) // start inside portal
         group.add(panel.mesh)
         this._resources.push(panel)
         return {def: p, panel}
