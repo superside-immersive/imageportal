@@ -375,14 +375,27 @@ if (!ENABLED) {
       this._resources = []
       this._running = false
 
-      // Wait for the target to be found before starting
-      const anchor = this.el.closest('[image-target-anchor]')
-      if (anchor) {
-        anchor.addEventListener('target-found', () => this._startSequence(), {once: true})
-      } else {
-        // Fallback: start after short delay (editor/desktop mode)
-        setTimeout(() => this._startSequence(), 2000)
+      // Listen for the same XR events that image-target-anchor uses
+      this._onFound = (e) => {
+        // Start once any image target is found
+        this._startSequence()
       }
+      this._onCameraStatus = (e) => {
+        // Desktop preview mode – start when 3D preview activates
+        if (e.detail?.status === 'hasDesktop3D') {
+          this._startSequence()
+        }
+      }
+
+      this.el.sceneEl.addEventListener('xrimagefound', this._onFound)
+      this.el.sceneEl.addEventListener('camerastatuschange', this._onCameraStatus)
+
+      // Fallback: if scene is already loaded in desktop mode, start after delay
+      setTimeout(() => {
+        if (!this._running && this.el.closest('[image-target-anchor]')?.object3D?.visible) {
+          this._startSequence()
+        }
+      }, 3000)
     },
 
     _startSequence() {
@@ -504,6 +517,13 @@ if (!ENABLED) {
     },
 
     remove() {
+      // Clean up event listeners
+      if (this._onFound) {
+        this.el.sceneEl.removeEventListener('xrimagefound', this._onFound)
+      }
+      if (this._onCameraStatus) {
+        this.el.sceneEl.removeEventListener('camerastatuschange', this._onCameraStatus)
+      }
       // Dispose all GPU resources
       for (const r of this._resources) {
         if (r.tex) r.tex.dispose()
