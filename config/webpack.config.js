@@ -61,6 +61,11 @@ const config = {
           noErrorOnMissing: true,
         },
         {
+          from: path.join(rootPath, 'miamilow.glb'),
+          to: path.join(distPath, 'assets', 'miamilow.glb'),
+          noErrorOnMissing: true,
+        },
+        {
           from: path.join(srcPath, 'assets', 'common'),
           to: path.join(distPath, 'assets', 'common'),
           noErrorOnMissing: true,
