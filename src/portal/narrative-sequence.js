@@ -297,20 +297,42 @@ function animateLine(lineData, duration, easeFn) {
 }
 
 const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3)
+const easeInOutCubic = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 
 /* ------------------------------------------------------------------ */
-/* Slide-in helper – moves a mesh from startZ to endZ                  */
+/* Path animation – moves a mesh through multiple waypoints (x,y,z)    */
 /* ------------------------------------------------------------------ */
 
-function slideIn(mesh, startZ, endZ, duration) {
-  mesh.position.z = startZ
+function pathAnimate(mesh, waypoints, duration, opts = {}) {
+  // waypoints: [{x,y,z}, ...] — at least 2
+  // opts.onCrossZ: {z, fn} — call fn() when mesh crosses z threshold
+  mesh.position.set(waypoints[0].x, waypoints[0].y, waypoints[0].z)
   mesh.visible = true
   const startTime = performance.now()
+  const segments = waypoints.length - 1
+  let crossFired = false
+
   return new Promise((resolve) => {
     const tick = () => {
       const t = Math.min(1, (performance.now() - startTime) / duration)
-      const et = easeOutCubic(t)
-      mesh.position.z = startZ + (endZ - startZ) * et
+      const et = easeInOutCubic(t)
+      const progress = et * segments
+      const segIdx = Math.min(Math.floor(progress), segments - 1)
+      const segT = progress - segIdx
+      const a = waypoints[segIdx]
+      const b = waypoints[segIdx + 1]
+      mesh.position.set(
+        a.x + (b.x - a.x) * segT,
+        a.y + (b.y - a.y) * segT,
+        a.z + (b.z - a.z) * segT
+      )
+
+      // Fire callback when crossing a z threshold (e.g. to disable depthTest)
+      if (opts.onCrossZ && !crossFired && mesh.position.z >= opts.onCrossZ.z) {
+        crossFired = true
+        opts.onCrossZ.fn()
+      }
+
       if (t < 1) {
         requestAnimationFrame(tick)
       } else {
@@ -352,7 +374,9 @@ function buildPanel(canvas, width, height) {
   const THREE = window.THREE
   const tex = new THREE.CanvasTexture(canvas)
   tex.minFilter = THREE.LinearFilter
-  const mat = new THREE.MeshBasicMaterial({map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false, depthTest: false})
+  // Start with depthTest ON — hider walls naturally hide the panel while inside the portal.
+  // We flip depthTest off once it crosses the opening so hider strips don't clip it.
+  const mat = new THREE.MeshBasicMaterial({map: tex, transparent: true, side: THREE.DoubleSide, depthWrite: false, depthTest: true})
   const geom = new THREE.PlaneGeometry(width, height)
   const mesh = new THREE.Mesh(geom, mat)
   mesh.renderOrder = 999
@@ -409,36 +433,54 @@ if (!ENABLED) {
       this.el.object3D.add(group)
       this._group = group
 
-      /* Panel definitions — positive Z = toward camera (in front of portal) */
+      /* Panel definitions
+       * Portal opening in anchor space: ~0.76 wide × ~1.01 tall, centered at origin, z≈0.
+       * Panels start deep inside (z=-0.8), travel to the center of the opening (z≈0.01),
+       * then fan outward and to the sides (positive z, offset x).
+       * depthTest starts ON so hider walls naturally occlude them while inside;
+       * it flips OFF once they cross z=0 so the front hider strips don't clip them.
+       */
       const panels = [
         {
           title: 'START AT HOME: ACTIVATE NATIVE APPS & SITES',
           subtitle: 'Couch Data',
           icon: iconCouchTablet,
-          pos: {x: -0.38, y: 0.32},
-          endZ: 0.18,
+          // Path: inside → center opening → fan upper-left
+          waypoints: [
+            {x: 0, y: 0, z: -0.8},
+            {x: 0, y: 0.05, z: 0.01},
+            {x: -0.46, y: 0.34, z: 0.25},
+          ],
           lineTarget: {x: -0.20, y: -0.10, z: -0.3},
         },
         {
           title: 'REACH SHOPPERS ON CTV, SOCIAL & PROGRAMMATIC',
           subtitle: 'The Street Data',
           icon: iconTVPhone,
-          pos: {x: 0, y: 0.08},
-          endZ: 0.14,
+          // Path: inside → center opening → settle center-above
+          waypoints: [
+            {x: 0, y: 0, z: -0.8},
+            {x: 0, y: 0, z: 0.01},
+            {x: 0, y: 0.06, z: 0.20},
+          ],
           lineTarget: {x: 0, y: -0.15, z: -0.35},
         },
         {
           title: 'IMPACT THE AISLE: IN-STORE SCREENS & RETAIL MEDIA',
           subtitle: 'The Store Data',
           icon: iconCartShelf,
-          pos: {x: 0.38, y: -0.16},
-          endZ: 0.10,
+          // Path: inside → center opening → fan upper-right
+          waypoints: [
+            {x: 0, y: 0, z: -0.8},
+            {x: 0, y: -0.05, z: 0.01},
+            {x: 0.46, y: -0.22, z: 0.25},
+          ],
           lineTarget: {x: 0.20, y: -0.20, z: -0.4},
         },
       ]
 
       const checkoutPos = {x: 0, y: -0.32, z: -0.5}
-      const ctaPos = {x: 0, y: 0.52, z: 0.22}
+      const ctaPos = {x: 0, y: 0.52, z: 0.28}
 
       const panelWidth = 0.52
       const panelHeight = 0.195
@@ -447,7 +489,7 @@ if (!ENABLED) {
       const built = panels.map((p) => {
         const canvas = createPanelCanvas(p.title, p.subtitle, p.icon)
         const panel = buildPanel(canvas, panelWidth, panelHeight)
-        panel.mesh.position.set(p.pos.x, p.pos.y, -0.5) // start inside portal
+        panel.mesh.position.set(p.waypoints[0].x, p.waypoints[0].y, p.waypoints[0].z)
         group.add(panel.mesh)
         this._resources.push(panel)
         return {def: p, panel}
@@ -477,17 +519,27 @@ if (!ENABLED) {
       // 1s initial delay
       await delay(1000)
 
-      // Slide panels in one by one
+      // Slide panels in one by one along their waypoint paths
       for (let i = 0; i < built.length; i++) {
         const {def, panel} = built[i]
-        await slideIn(panel.mesh, -1.5, def.endZ, 800)
 
-        // Draw connecting line from panel to its city target
-        const lineStart = new THREE.Vector3(def.pos.x, def.pos.y, def.endZ)
+        // Animate along the 3-point path (inside → opening center → fanned out)
+        // When crossing z=0 (the portal opening), disable depthTest so front
+        // hider-wall strips don't clip the panel once it's outside.
+        await pathAnimate(panel.mesh, def.waypoints, 1400, {
+          onCrossZ: {
+            z: 0.0,
+            fn: () => { panel.mat.depthTest = false },
+          },
+        })
+
+        // Draw connecting line from final panel position to its city target
+        const finalWp = def.waypoints[def.waypoints.length - 1]
+        const lineStart = new THREE.Vector3(finalWp.x, finalWp.y, finalWp.z)
         const lineMid = new THREE.Vector3(
-          (def.pos.x + def.lineTarget.x) / 2,
-          (def.pos.y + def.lineTarget.y) / 2,
-          (def.endZ + def.lineTarget.z) / 2
+          (finalWp.x + def.lineTarget.x) / 2,
+          (finalWp.y + def.lineTarget.y) / 2,
+          (finalWp.z + def.lineTarget.z) / 2
         )
         const lineEnd = new THREE.Vector3(def.lineTarget.x, def.lineTarget.y, def.lineTarget.z)
 
