@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <title>Portal SLAM · A-Frame + 8th Wall</title>
+  <meta itemprop="name" content="Portal SLAM">
+  <meta name="twitter:title" content="Portal SLAM · A-Frame + 8th Wall">
+  <meta property="og:title" content="Portal SLAM · A-Frame + 8th Wall">
+  <meta property="og:site_name" content="Portal SLAM">
+  <meta name="description" content="Misma escena del portal, colocada con SLAM sobre el piso.">
+  <meta itemprop="description" content="Misma escena del portal, colocada con SLAM sobre el piso.">
+  <meta property="og:description" content="Misma escena del portal, colocada con SLAM sobre el piso.">
+  <meta name="twitter:description" content="Misma escena del portal, colocada con SLAM sobre el piso.">
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <script crossorigin="anonymous" src="./external/runtime/runtime.js"></script>
+  <script crossorigin="anonymous" src="./external/xr/xr.js" async="true" data-preload-chunks="slam"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --panel-bg: rgba(6, 10, 22, 0.72);
+      --panel-border: rgba(167, 196, 255, 0.22);
+      --text: #eef3ff;
+      --muted: #bbcaef;
+      --accent: #8ab4ff;
+      --toggle-on: #1e2f57;
+      --toggle-off: #5a6f99;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #05070f;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .hud {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      pointer-events: none;
+    }
+
+    .panel {
+      max-width: min(460px, calc(100vw - 32px));
+      padding: 14px 16px;
+      border: 1px solid var(--panel-border);
+      border-radius: 18px;
+      background: var(--panel-bg);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+      pointer-events: auto;
+    }
+
+    .panel h1 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .panel p,
+    .panel li,
+    .panel span {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .panel ul {
+      margin: 10px 0 0;
+      padding-left: 1.15rem;
+    }
+
+    .status {
+      margin-top: 10px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .toggle-btn {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 30;
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--toggle-on);
+      color: var(--text);
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      pointer-events: auto;
+      touch-action: manipulation;
+      transition: background 160ms ease, transform 100ms ease;
+    }
+
+    .toggle-btn:active {
+      transform: scale(0.97);
+    }
+
+    .toggle-btn.is-off {
+      background: var(--toggle-off);
+    }
+
+    .target-card {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      max-width: 280px;
+    }
+
+    .target-card img {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .target-card strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+      font-size: 0.92rem;
+    }
+
+    .hint {
+      color: var(--accent);
+    }
+
+    @media (max-width: 900px) {
+      .hud {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .target-card {
+        max-width: min(420px, calc(100vw - 32px));
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <button id="toggle-portal" class="toggle-btn" type="button">Portal ON</button>
+
+  <div class="hud" style="display:none">
+    <div class="panel" style="margin-top: 56px;">
+      <h1>Portal SLAM</h1>
+      <p>Misma escena de <strong>index.html</strong> en modo SLAM (sin image target tracking).</p>
+      <ul>
+        <li>Apuntá al piso y tocá la pantalla para ubicar el portal.</li>
+        <li>Podés recolocarlo tocando otra vez en el piso (XY).</li>
+        <li class="hint">El botón superior alterna portal vs imagen target en el mismo punto.</li>
+      </ul>
+      <p id="status" class="status">Inicializando runtime XR…</p>
+      <p id="compatibility"></p>
+    </div>
+
+    <div class="panel target-card" style="margin-top: 56px;">
+      <img src="./image-targets/poster2_thumbnail.png" alt="Target poster2">
+      <div>
+        <strong>Referencia visual</strong>
+        <span>La imagen target se renderiza en la misma posición/orientación del portal cuando el portal está apagado.</span>
+      </div>
+    </div>
+  </div>
+
+  <a-scene
+    renderer="antialias: false; colorManagement: true; physicallyCorrectLights: false; precision: mediump"
+    xrweb="allowedDevices: any; disableWorldTracking: false; disableDefaultEnvironment: true; delayRun: true"
+    loading-screen="enabled: false"
+    background="color: #05070f">
+
+    <a-assets timeout="20000">
+      <a-asset-item id="cityModel" src="./assets/citylight.glb"></a-asset-item>
+      <img id="poster2Reference" src="./image-targets/poster2_original.png" alt="Poster 2 reference">
+    </a-assets>
+
+    <a-camera id="camera" position="0 0.3 1.5" rotation="0 0 0"></a-camera>
+
+    <a-entity id="slam-anchor" position="0 0 -2" rotation="0 0 0" scale="1 1 1" visible="false">
+      <a-entity id="target-reference" visible="false">
+        <a-plane
+          id="target-reference-image"
+          width="1"
+          height="1.3341666667"
+          position="0 0 -0.025"
+          material="src: #poster2Reference; transparent: true; opacity: 0.92; side: double; shader: flat">
+        </a-plane>
+        <a-box id="target-reference-top" width="1.06" height="0.025" depth="0.012" position="0 0.6795833334 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-bottom" width="1.06" height="0.025" depth="0.012" position="0 -0.6795833334 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-left" width="0.025" height="1.3841666667" depth="0.012" position="-0.5175 0 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-right" width="0.025" height="1.3841666667" depth="0.012" position="0.5175 0 -0.02" color="#8ab4ff"></a-box>
+      </a-entity>
+
+      <a-entity
+        id="portal-root"
+        position="0 0 0"
+        rotation="0 0 0"
+        scale="0.76 0.76 0.76"
+        portal="width: 1; height: 1.3341666667">
+
+        <a-entity id="portal-frame">
+          <a-box id="portal-frame-left" depth="0.04" height="1.3541666667" width="0.01" position="-0.505 0 0.01" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-right" depth="0.04" height="1.3541666667" width="0.01" position="0.505 0 0.01" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-top" depth="0.04" height="0.01" width="1.02" position="0 0.6721 0.01" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-bottom" depth="0.04" height="0.01" width="1.02" position="0 -0.6721 0.01" color="#44506c"></a-box>
+        </a-entity>
+
+        <a-entity id="hider-walls" data-hider-walls>
+          <a-plane width="28" height="13.33292" position="0 7.33354 0.005" depth-mask></a-plane>
+          <a-plane width="28" height="13.33292" position="0 -7.33354 0.005" depth-mask></a-plane>
+          <a-plane width="13.5" height="1.3341666667" position="-7.25 0 0.005" depth-mask></a-plane>
+          <a-plane width="13.5" height="1.3341666667" position="7.25 0 0.005" depth-mask></a-plane>
+          <a-plane width="28" height="28" position="0 0 -26" depth-mask></a-plane>
+          <a-plane width="26" height="28" position="-14 0 -13" rotation="0 90 0" depth-mask></a-plane>
+          <a-plane width="26" height="28" position="14 0 -13" rotation="0 -90 0" depth-mask></a-plane>
+          <a-plane width="28" height="26" position="0 14 -13" rotation="90 0 0" depth-mask></a-plane>
+          <a-plane width="28" height="26" position="0 -14 -13" rotation="-90 0 0" depth-mask></a-plane>
+        </a-entity>
+
+        <a-entity id="portal-contents" data-portal-contents>
+          <a-sphere id="portal-sky" radius="12" segments-width="10" segments-height="8" position="0 0 -13" material="shader: flat; side: back; color: #8fd8ff"></a-sphere>
+          <a-circle id="portal-floor" radius="4" rotation="-90 0 0" position="0 -1.08 -5" material="color: #223150; opacity: 0.92"></a-circle>
+
+          <a-entity
+            id="portal-city"
+            gltf-model="#cityModel"
+            unlit-model
+            position="0 -0.93 0"
+            rotation="0 270 0"
+            scale="0.12 0.12 0.12">
+          </a-entity>
+
+          <a-sphere
+            id="portal-orb"
+            radius="0.12"
+            position="0 0.6135 -1.2"
+            material="shader: flat; color: #8ab4ff; emissive: #8ab4ff; emissiveIntensity: 1.2"
+            bob="distance: 0.08; duration: 1200">
+          </a-sphere>
+        </a-entity>
+      </a-entity>
+    </a-entity>
+  </a-scene>
+
+  <script src="slam-bundle.js"></script>
+</body>
+
+</html>

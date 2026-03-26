@@ -15,9 +15,12 @@ const makeTsLoader = () => ({
 })
 
 const config = {
-  entry: path.join(srcPath, 'app.js'),
+  entry: {
+    bundle: path.join(srcPath, 'app.js'),
+    'slam-bundle': path.join(srcPath, 'slam.js'),
+  },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].js',
     path: distPath,
     publicPath: '/',
   },
@@ -31,6 +34,12 @@ const config = {
     new HtmlWebpackPlugin({
       template: path.join(srcPath, 'editor.html'),
       filename: 'editor.html',
+      scriptLoading: 'blocking',
+      inject: false,
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(srcPath, 'slam.html'),
+      filename: 'slam.html',
       scriptLoading: 'blocking',
       inject: false,
     }),
