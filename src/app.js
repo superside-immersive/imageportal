@@ -1,4 +1,5 @@
 import './portal/portal-components'
+import './portal/narrative-sequence'
 
 const poster2Target = require('../image-targets copy/poster2.json')
 
