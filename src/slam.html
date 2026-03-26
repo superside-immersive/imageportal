@@ -198,6 +198,7 @@
     <a-assets timeout="20000">
       <a-asset-item id="cityModel" src="./assets/citylight.glb"></a-asset-item>
       <img id="poster2Reference" src="./image-targets/poster2_original.png" alt="Poster 2 reference">
+      <img id="skyTexture" src="./assets/common/clear_sky.jpg">
     </a-assets>
 
     <a-camera id="camera" position="0 0.3 1.5" rotation="0 0 0"></a-camera>
@@ -244,7 +245,7 @@
         </a-entity>
 
         <a-entity id="portal-contents" data-portal-contents>
-          <a-sphere id="portal-sky" radius="12" segments-width="32" segments-height="16" position="0 0 -13" material="shader: flat; side: back; src: url(./assets/common/clear_sky.jpg); color: #a9d9ff"></a-sphere>
+          <a-sphere id="portal-sky" radius="12" segments-width="32" segments-height="16" position="0 0 -13" material="shader: flat; side: back; src: #skyTexture; color: #fff"></a-sphere>
           <a-circle id="portal-floor" radius="4" rotation="-90 0 0" position="0 -1.08 -5" material="color: #223150; opacity: 0.92"></a-circle>
 
           <a-entity

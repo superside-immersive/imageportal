@@ -60,6 +60,11 @@ const config = {
           to: path.join(distPath, 'assets', 'citylight.glb'),
           noErrorOnMissing: true,
         },
+        {
+          from: path.join(srcPath, 'assets', 'common'),
+          to: path.join(distPath, 'assets', 'common'),
+          noErrorOnMissing: true,
+        },
       ],
     }),
   ],
