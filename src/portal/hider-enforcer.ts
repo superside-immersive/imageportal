@@ -65,7 +65,7 @@ ecs.registerComponent({
           )
         })
 
-        console.log('[Hider Enforcer] hollow portal shell built from planes with poster2-sized opening')
+        console.log('[Hider Enforcer] hollow portal shell built from planes with image-target-sized opening')
       })
   },
 })

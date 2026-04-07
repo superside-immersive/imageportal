@@ -1,0 +1,22 @@
+{
+  "imagePath": "image-targets/download-1773332030950-2-2_luminance.png",
+  "metadata": null,
+  "name": "download-1773332030950-2-2",
+  "type": "PLANAR",
+  "properties": {
+    "top": 61,
+    "left": 0,
+    "width": 908,
+    "height": 1210,
+    "originalWidth": 908,
+    "originalHeight": 1332
+  },
+  "resources": {
+    "originalImage": "image-targets/download-1773332030950-2-2_original.png",
+    "croppedImage": "image-targets/download-1773332030950-2-2_cropped.png",
+    "thumbnailImage": "image-targets/download-1773332030950-2-2_thumbnail.png",
+    "luminanceImage": "image-targets/download-1773332030950-2-2_luminance.png"
+  },
+  "created": 1775586044455,
+  "updated": 1775586044455
+}

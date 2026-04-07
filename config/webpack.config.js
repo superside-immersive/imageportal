@@ -7,6 +7,7 @@ const rootPath = process.cwd()
 const distPath = path.join(rootPath, 'dist')
 const srcPath = path.join(rootPath, 'src')
 const sceneFilePath = path.join(srcPath, '.expanse.json')
+const activeImageTargetBaseName = 'download-1773332030950-2-2'
 
 const makeTsLoader = () => ({
   test: /\.ts$/,
@@ -23,6 +24,7 @@ const config = {
     filename: '[name].js',
     path: distPath,
     publicPath: '/',
+    clean: true,
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -51,7 +53,7 @@ const config = {
           noErrorOnMissing: true,
         },
         {
-          from: path.join(rootPath, 'image-targets copy', 'poster2*'),
+          from: path.join(rootPath, 'image-targets', `${activeImageTargetBaseName}*`),
           to: path.join(distPath, 'image-targets', '[name][ext]'),
           noErrorOnMissing: true,
         },

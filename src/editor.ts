@@ -29,7 +29,7 @@ import {
 } from 'three'
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js'
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js'
-import {getPortalShellPanels, POSTER2_TARGET_HEIGHT, POSTER2_TARGET_WIDTH} from './portal/hider-shell'
+import {getPortalShellPanels, IMAGE_TARGET_HEIGHT, IMAGE_TARGET_WIDTH} from './portal/hider-shell'
 
 type GeometryDefinition = {
   type: string
@@ -410,7 +410,7 @@ if (isEditorPage) {
       return Boolean(object.imageTarget) && isDescendantOf(object.id, entrySpaceId)
     })
 
-    return imageTargets.find((object) => getImageTargetName(object) === 'poster2') || imageTargets[0] || null
+    return imageTargets[0] || null
   }
 
   const getObjectKind = (object: GraphObject) => {
@@ -532,8 +532,8 @@ if (isEditorPage) {
         `./image-targets/${targetName}.jpeg`,
       ])
 
-      const planeWidth = POSTER2_TARGET_WIDTH
-      const planeHeight = POSTER2_TARGET_HEIGHT
+      const planeWidth = IMAGE_TARGET_WIDTH
+      const planeHeight = IMAGE_TARGET_HEIGHT
 
       const trackerPlane = new Mesh(
         new PlaneGeometry(planeWidth, planeHeight),

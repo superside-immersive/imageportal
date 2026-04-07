@@ -9,7 +9,7 @@ const portalRootEl = document.getElementById('portal-root')
 const targetReferenceEl = document.getElementById('target-reference')
 
 const DEFAULT_PORTAL_SCALE = 0.76
-const PORTAL_HALF_HEIGHT = (1.3341666667 * DEFAULT_PORTAL_SCALE) / 2
+const PORTAL_HALF_HEIGHT = (1.3325991189 * DEFAULT_PORTAL_SCALE) / 2
 
 let portalVisible = true
 let hasPlaced = false

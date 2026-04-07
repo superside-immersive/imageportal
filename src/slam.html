@@ -181,7 +181,7 @@
     </div>
 
     <div class="panel target-card" style="margin-top: 56px;">
-      <img src="./image-targets/poster2_thumbnail.png" alt="Target poster2">
+      <img src="./image-targets/download-1773332030950-2-2_thumbnail.png" alt="Target activo">
       <div>
         <strong>Referencia visual</strong>
         <span>La imagen target se renderiza en la misma posición/orientación del portal cuando el portal está apagado.</span>
@@ -197,7 +197,7 @@
 
     <a-assets timeout="20000">
       <a-asset-item id="cityModel" src="./assets/citylight.glb"></a-asset-item>
-      <img id="poster2Reference" src="./image-targets/poster2_original.png" alt="Poster 2 reference">
+      <img id="imageTargetReference" src="./image-targets/download-1773332030950-2-2_original.png" alt="Image target reference">
       <img id="skyTexture" src="./assets/common/clear_sky.jpg">
     </a-assets>
 
@@ -208,14 +208,14 @@
         <a-plane
           id="target-reference-image"
           width="1"
-          height="1.3341666667"
+          height="1.3325991189"
           position="0 0 -0.025"
-          material="src: #poster2Reference; transparent: true; opacity: 0.92; side: double; shader: flat">
+          material="src: #imageTargetReference; transparent: true; opacity: 0.92; side: double; shader: flat">
         </a-plane>
-        <a-box id="target-reference-top" width="1.06" height="0.025" depth="0.012" position="0 0.6795833334 -0.02" color="#8ab4ff"></a-box>
-        <a-box id="target-reference-bottom" width="1.06" height="0.025" depth="0.012" position="0 -0.6795833334 -0.02" color="#8ab4ff"></a-box>
-        <a-box id="target-reference-left" width="0.025" height="1.3841666667" depth="0.012" position="-0.5175 0 -0.02" color="#8ab4ff"></a-box>
-        <a-box id="target-reference-right" width="0.025" height="1.3841666667" depth="0.012" position="0.5175 0 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-top" width="1.06" height="0.025" depth="0.012" position="0 0.6787995595 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-bottom" width="1.06" height="0.025" depth="0.012" position="0 -0.6787995595 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-left" width="0.025" height="1.3825991189" depth="0.012" position="-0.5175 0 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-right" width="0.025" height="1.3825991189" depth="0.012" position="0.5175 0 -0.02" color="#8ab4ff"></a-box>
       </a-entity>
 
       <a-entity
@@ -223,20 +223,20 @@
         position="0 0 0"
         rotation="0 0 0"
         scale="0.76 0.76 0.76"
-        portal="width: 1; height: 1.3341666667">
+        portal="width: 1; height: 1.3325991189">
 
         <a-entity id="portal-frame">
           <a-box id="portal-frame-left" depth="0.04" height="1.3541666667" width="0.01" position="-0.505 0 0.01" color="#6c7fb0"></a-box>
           <a-box id="portal-frame-right" depth="0.04" height="1.3541666667" width="0.01" position="0.505 0 0.01" color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-top" depth="0.04" height="0.01" width="1.02" position="0 0.6721 0.01" color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-bottom" depth="0.04" height="0.01" width="1.02" position="0 -0.6721 0.01" color="#44506c"></a-box>
+          <a-box id="portal-frame-top" depth="0.04" height="0.01" width="1.02" position="0 0.6713 0.01" color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-bottom" depth="0.04" height="0.01" width="1.02" position="0 -0.6713 0.01" color="#44506c"></a-box>
         </a-entity>
 
         <a-entity id="hider-walls" data-hider-walls>
           <a-plane width="28" height="13.33292" position="0 7.33354 0.005" depth-mask></a-plane>
           <a-plane width="28" height="13.33292" position="0 -7.33354 0.005" depth-mask></a-plane>
-          <a-plane width="13.5" height="1.3341666667" position="-7.25 0 0.005" depth-mask></a-plane>
-          <a-plane width="13.5" height="1.3341666667" position="7.25 0 0.005" depth-mask></a-plane>
+          <a-plane width="13.5" height="1.3325991189" position="-7.25 0 0.005" depth-mask></a-plane>
+          <a-plane width="13.5" height="1.3325991189" position="7.25 0 0.005" depth-mask></a-plane>
           <a-plane width="28" height="28" position="0 0 -26" depth-mask></a-plane>
           <a-plane width="26" height="28" position="-14 0 -13" rotation="0 90 0" depth-mask></a-plane>
           <a-plane width="26" height="28" position="14 0 -13" rotation="0 -90 0" depth-mask></a-plane>

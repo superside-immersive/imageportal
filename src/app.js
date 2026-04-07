@@ -1,7 +1,8 @@
 import './portal/portal-components'
 import './portal/narrative-sequence'
 
-const poster2Target = require('../image-targets copy/poster2.json')
+const imageTarget = require('../image-targets/download-1773332030950-2-2.json')
+const IMAGE_TARGET_NAME = imageTarget.name
 
 const sceneEl = document.querySelector('a-scene')
 const statusEl = document.getElementById('status')
@@ -14,11 +15,11 @@ const statsMode = new URLSearchParams(window.location.search).has('stats')
 const DEFAULT_PORTAL_SCALE = 0.76
 
 const enableEditorReferenceAssets = () => {
-  const posterReferenceEl = document.getElementById('poster2Reference')
-  const posterReferenceSrc = posterReferenceEl?.dataset?.src
+  const imageTargetReferenceEl = document.getElementById('imageTargetReference')
+  const imageTargetReferenceSrc = imageTargetReferenceEl?.dataset?.src
 
-  if (posterReferenceEl && posterReferenceSrc && posterReferenceEl.getAttribute('src') !== posterReferenceSrc) {
-    posterReferenceEl.setAttribute('src', posterReferenceSrc)
+  if (imageTargetReferenceEl && imageTargetReferenceSrc && imageTargetReferenceEl.getAttribute('src') !== imageTargetReferenceSrc) {
+    imageTargetReferenceEl.setAttribute('src', imageTargetReferenceSrc)
   }
 }
 
@@ -39,9 +40,9 @@ const describeCameraStatus = (status) => {
     case 'requesting':
       return 'Solicitando acceso a cámara o sesión desktop…'
     case 'hasStream':
-      return 'Cámara lista. Buscando el image target poster2…'
+      return 'Cámara lista. Buscando el image target configurado…'
     case 'hasVideo':
-      return 'Video activo. Escaneá poster2 para fijar el portal.'
+      return 'Video activo. Escaneá el image target para fijar el portal.'
     case 'hasDesktop3D':
       return 'Desktop preview activo. Podés navegar la escena e inspeccionarla con A-Frame.'
     case 'failed':
@@ -72,14 +73,14 @@ const attachUiListeners = () => {
   })
 
   sceneEl.addEventListener('xrimagefound', (event) => {
-    if (event.detail?.name === 'poster2') {
-      setStatus('poster2 detectado. El portal quedó anclado a la imagen.')
+    if (event.detail?.name === IMAGE_TARGET_NAME) {
+      setStatus('Image target detectado. El portal quedó anclado a la imagen.')
     }
   })
 
   sceneEl.addEventListener('xrimagelost', (event) => {
-    if (event.detail?.name === 'poster2') {
-      setStatus('Se perdió poster2. Volvé a encuadrarlo para reanclar el portal.')
+    if (event.detail?.name === IMAGE_TARGET_NAME) {
+      setStatus('Se perdió el image target. Volvé a encuadrarlo para reanclar el portal.')
     }
   })
 
@@ -133,7 +134,7 @@ const startReality = async () => {
   }
 
   window.XR8.XrController.configure({
-    imageTargetData: [poster2Target],
+    imageTargetData: [imageTarget],
     disableWorldTracking: true,
   })
 

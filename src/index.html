@@ -139,7 +139,7 @@
   <div class="hud" style="display:none">
     <div class="panel">
       <h1>Portal Tracker</h1>
-      <p>Experiencia principal migrada a <strong>A-Frame</strong> con portal anclado al target <strong>poster2</strong>.</p>
+      <p>Experiencia principal migrada a <strong>A-Frame</strong> con portal anclado al image target configurado.</p>
       <ul>
         <li>Mobile: apuntá la cámara al target para fijar el portal.</li>
         <li>Desktop: abrí la escena como preview 3D navegable.</li>
@@ -150,10 +150,10 @@
     </div>
 
     <div class="panel target-card">
-      <img src="./image-targets/poster2_thumbnail.png" alt="Target poster2">
+      <img src="./image-targets/download-1773332030950-2-2_thumbnail.png" alt="Target activo">
       <div>
         <strong>Image target activo</strong>
-        <span>Usá <strong>poster2</strong> para disparar el portal. En desktop queda visible como preview para inspección.</span>
+        <span>Usá la imagen de referencia cargada para disparar el portal. En desktop queda visible como preview para inspección.</span>
       </div>
     </div>
   </div>
@@ -166,7 +166,7 @@
 
     <a-assets timeout="20000">
       <a-asset-item id="cityModel" src="./assets/miamilow.glb"></a-asset-item>
-      <img id="poster2Reference" data-src="./image-targets/poster2_original.png" alt="Poster 2 reference">
+      <img id="imageTargetReference" data-src="./image-targets/download-1773332030950-2-2_original.png" alt="Image target reference">
       <img id="skyTexture" src="./assets/common/clear_sky.jpg">
     </a-assets>
 
@@ -174,7 +174,7 @@
 
     <a-entity
       id="target-anchor"
-      image-target-anchor="name: poster2"
+      image-target-anchor="name: download-1773332030950-2-2"
       position="0 0 0"
       rotation="0 0 0"
       scale="1 1 1">
@@ -183,14 +183,14 @@
         <a-plane
           id="target-reference-image"
           width="1"
-          height="1.3341666667"
+          height="1.3325991189"
           position="0 0 -0.025"
-          material="src: #poster2Reference; transparent: true; opacity: 0.58; side: double; shader: flat">
+          material="src: #imageTargetReference; transparent: true; opacity: 0.58; side: double; shader: flat">
         </a-plane>
-        <a-box id="target-reference-top" width="1.06" height="0.025" depth="0.012" position="0 0.6795833334 -0.02" color="#8ab4ff"></a-box>
-        <a-box id="target-reference-bottom" width="1.06" height="0.025" depth="0.012" position="0 -0.6795833334 -0.02" color="#8ab4ff"></a-box>
-        <a-box id="target-reference-left" width="0.025" height="1.3841666667" depth="0.012" position="-0.5175 0 -0.02" color="#8ab4ff"></a-box>
-        <a-box id="target-reference-right" width="0.025" height="1.3841666667" depth="0.012" position="0.5175 0 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-top" width="1.06" height="0.025" depth="0.012" position="0 0.6787995595 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-bottom" width="1.06" height="0.025" depth="0.012" position="0 -0.6787995595 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-left" width="0.025" height="1.3825991189" depth="0.012" position="-0.5175 0 -0.02" color="#8ab4ff"></a-box>
+        <a-box id="target-reference-right" width="0.025" height="1.3825991189" depth="0.012" position="0.5175 0 -0.02" color="#8ab4ff"></a-box>
       </a-entity>
 
       <a-entity
@@ -198,14 +198,14 @@
         position="0 0 0"
         rotation="0 0 0"
         scale="0.76 0.76 0.76"
-        portal="width: 1; height: 1.3341666667">
+        portal="width: 1; height: 1.3325991189">
 
         <!-- Thin decorative frame around the portal opening -->
         <a-entity id="portal-frame">
           <a-box id="portal-frame-left"   depth="0.04" height="1.3541666667" width="0.01" position="-0.505 0 0.01" color="#6c7fb0"></a-box>
           <a-box id="portal-frame-right"  depth="0.04" height="1.3541666667" width="0.01" position="0.505 0 0.01"  color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-top"    depth="0.04" height="0.01"         width="1.02" position="0 0.6721 0.01"  color="#6c7fb0"></a-box>
-          <a-box id="portal-frame-bottom" depth="0.04" height="0.01"         width="1.02" position="0 -0.6721 0.01" color="#44506c"></a-box>
+          <a-box id="portal-frame-top"    depth="0.04" height="0.01"         width="1.02" position="0 0.6713 0.01"  color="#6c7fb0"></a-box>
+          <a-box id="portal-frame-bottom" depth="0.04" height="0.01"         width="1.02" position="0 -0.6713 0.01" color="#44506c"></a-box>
         </a-entity>
 
          <!--
@@ -224,11 +224,11 @@
                position="0 -7.33354 0.005"
                depth-mask></a-plane>
 
-           <a-plane width="13.5" height="1.3341666667"
+             <a-plane width="13.5" height="1.3325991189"
                position="-7.25 0 0.005"
                depth-mask></a-plane>
 
-           <a-plane width="13.5" height="1.3341666667"
+             <a-plane width="13.5" height="1.3325991189"
                position="7.25 0 0.005"
                depth-mask></a-plane>
 

@@ -1,4 +1,4 @@
-const TARGET_HEIGHT = 1601 / 1200
+const TARGET_HEIGHT = 1210 / 908
 
 const POSITION_EPSILON = 0.0001
 const SCALE_EPSILON = 0.0001
@@ -191,7 +191,7 @@ registerComponent('portal', {
 
 registerComponent('image-target-anchor', {
   schema: {
-    name: {type: 'string', default: 'poster2'},
+    name: {type: 'string', default: 'download-1773332030950-2-2'},
     positionSmoothing: {default: 0.18},
     rotationSmoothing: {default: 0.16},
     scaleSmoothing: {default: 0.2},

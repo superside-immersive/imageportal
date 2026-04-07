@@ -1,5 +1,5 @@
-export const POSTER2_TARGET_WIDTH = 1
-export const POSTER2_TARGET_HEIGHT = 1601 / 1200
+export const IMAGE_TARGET_WIDTH = 1
+export const IMAGE_TARGET_HEIGHT = 1210 / 908
 
 export const PORTAL_SHELL_DEPTH = 8
 export const PORTAL_SHELL_OUTER_WIDTH = 12
@@ -13,13 +13,13 @@ export type ShellPanel = {
   name: string
 }
 
-export const getPoster2HoleSize = () => ({
-  width: POSTER2_TARGET_WIDTH,
-  height: POSTER2_TARGET_HEIGHT,
+export const getImageTargetHoleSize = () => ({
+  width: IMAGE_TARGET_WIDTH,
+  height: IMAGE_TARGET_HEIGHT,
 })
 
 export const getPortalShellPanels = (): ShellPanel[] => {
-  const hole = getPoster2HoleSize()
+  const hole = getImageTargetHoleSize()
   const sideWidth = (PORTAL_SHELL_OUTER_WIDTH - hole.width) / 2
   const topHeight = (PORTAL_SHELL_OUTER_HEIGHT - hole.height) / 2
   const halfOuterWidth = PORTAL_SHELL_OUTER_WIDTH / 2
