@@ -167,6 +167,79 @@ registerComponent('unlit-model', {
   },
 })
 
+registerComponent('gltf-loop-animation', {
+  schema: {
+    clip: {type: 'string', default: '*'},
+    timeScale: {default: 1},
+  },
+
+  init() {
+    this.mixer = null
+    this.actions = []
+    this.playAnimations = this.playAnimations.bind(this)
+    this.el.addEventListener('model-loaded', this.playAnimations)
+    this.playAnimations()
+  },
+
+  playAnimations() {
+    const {THREE} = window
+    const mesh = this.el.getObject3D('mesh')
+
+    if (!THREE || !mesh) {
+      return
+    }
+
+    const clips = mesh.animations || []
+
+    if (clips.length === 0) {
+      return
+    }
+
+    if (this.mixer) {
+      this.mixer.stopAllAction()
+    }
+
+    const selectedClips = this.data.clip === '*'
+      ? clips
+      : clips.filter((clip) => clip.name === this.data.clip)
+
+    if (selectedClips.length === 0) {
+      return
+    }
+
+    this.mixer = new THREE.AnimationMixer(mesh)
+    this.actions = selectedClips.map((clip) => {
+      const action = this.mixer.clipAction(clip)
+      action.setLoop(THREE.LoopRepeat, Infinity)
+      action.clampWhenFinished = false
+      action.enabled = true
+      action.timeScale = this.data.timeScale
+      action.play()
+      return action
+    })
+  },
+
+  tick(_, delta = 0) {
+    if (!this.mixer || delta <= 0) {
+      return
+    }
+
+    this.mixer.update(delta / 1000)
+  },
+
+  remove() {
+    this.el.removeEventListener('model-loaded', this.playAnimations)
+
+    if (this.mixer) {
+      this.mixer.stopAllAction()
+      this.mixer.uncacheRoot(this.el.getObject3D('mesh'))
+    }
+
+    this.actions = []
+    this.mixer = null
+  },
+})
+
 // Portal component – uses the 8th Wall hider-walls depth-occlusion approach:
 // hider-walls (depth-mask material, colorWrite:false, depthWrite:true) form a closed box
 // around the camera with exactly one rectangular opening (the image target).
