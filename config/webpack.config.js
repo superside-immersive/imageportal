@@ -68,6 +68,11 @@ const config = {
           noErrorOnMissing: true,
         },
         {
+          from: path.join(rootPath, 'citysara.glb'),
+          to: path.join(distPath, 'assets', 'citysara.glb'),
+          noErrorOnMissing: true,
+        },
+        {
           from: path.join(srcPath, 'assets', 'common'),
           to: path.join(distPath, 'assets', 'common'),
           noErrorOnMissing: true,

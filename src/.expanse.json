@@ -1460,7 +1460,7 @@
       "gltfModel": {
         "src": {
           "type": "asset",
-          "asset": "assets/city.glb"
+          "asset": "assets/citysara.glb"
         },
         "animationClip": "",
         "loop": true
