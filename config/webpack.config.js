@@ -45,6 +45,12 @@ const config = {
       scriptLoading: 'blocking',
       inject: false,
     }),
+    new HtmlWebpackPlugin({
+      template: path.join(srcPath, 'review.html'),
+      filename: 'review.html',
+      scriptLoading: 'blocking',
+      inject: false,
+    }),
     new CopyWebpackPlugin({
       patterns: [
         {

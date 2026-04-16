@@ -3,7 +3,7 @@ const STORAGE_KEY = 'portal-editor-config-v1'
 // theta = horizontal rotation in degrees (0 = looking from +Z)
 // phi = vertical angle in degrees from top pole (90 = horizon, <90 = above, >90 = below)
 const DEFAULT_CAMERA_VIEW = {
-  target: {x: 0, y: 0, z: 0},
+  target: {x: 0, y: 0, z: -13},
   distance: 16,
   theta: 0,
   phi: 75,
@@ -11,9 +11,9 @@ const DEFAULT_CAMERA_VIEW = {
 
 const VIEW_PRESETS = {
   reset: {...DEFAULT_CAMERA_VIEW},
-  front: {target: {x: 0, y: 0, z: 0}, distance: 16, theta: 0, phi: 90},
-  iso: {target: {x: 0, y: 0, z: 0}, distance: 18, theta: 35, phi: 70},
-  top: {target: {x: 0, y: 0, z: 0}, distance: 20, theta: 0, phi: 5},
+  front: {target: {x: 0, y: 0, z: -13}, distance: 16, theta: 0, phi: 90},
+  iso: {target: {x: 0, y: 0, z: -13}, distance: 18, theta: 35, phi: 70},
+  top: {target: {x: 0, y: 0, z: -13}, distance: 20, theta: 0, phi: 5},
 }
 
 const normalizeWheelDelta = (event) => {
@@ -74,7 +74,7 @@ const fitCameraToElements = (camera, elements) => {
 
   applyCameraView(camera, {
     target: {x: round(center.x), y: round(center.y), z: round(center.z)},
-    distance: round(Math.max(radius * 2.4, 3.8), 3),
+    distance: round(Math.min(Math.max(radius * 2.4, 3.8), 28), 3),
     theta: 35,
     phi: 70,
   })
@@ -658,11 +658,11 @@ export const enablePortalEditorMode = ({sceneEl, setStatus, setCompatibility}) =
   })
 
   if (contents) contents.object3D.visible = true
-  if (walls) walls.object3D.visible = true
+  if (walls) walls.object3D.visible = false
   if (portalWall) portalWall.object3D.visible = false
 
-  setStatus('Editor A-Frame activo. Toda la escena 3D del portal está visible y editable.')
-  setCompatibility('Mouse izquierdo: orbitar · click derecho o botón central: pan · rueda/trackpad: zoom libre. La oclusión se muestra semitransparente solo en editor.')
+  setStatus('Editor A-Frame activo. Escena 3D visible y editable sin oclusión de hider walls.')
+  setCompatibility('Mouse izquierdo: orbitar · click derecho o botón central: pan · rueda/trackpad: zoom libre. En editor se desactiva la oclusión para facilitar la revisión visual.')
 
   const panel = document.createElement('aside')
   panel.className = 'portal-editor'
@@ -817,7 +817,7 @@ export const enablePortalEditorMode = ({sceneEl, setStatus, setCompatibility}) =
     }
   })
   fitViewButton.addEventListener('click', () => {
-    fitCameraToElements(camera, [targetReference, portalFrame, portalRoot, portalCity, portalOrb])
+    fitCameraToElements(camera, [targetReference, portalFrame, contents, portalOrb])
     setStatus('Vista ajustada al image target y al portal.')
   })
   resetViewButton.addEventListener('click', () => {
@@ -837,5 +837,5 @@ export const enablePortalEditorMode = ({sceneEl, setStatus, setCompatibility}) =
   renderFields()
   refreshJson()
 
-  fitCameraToElements(camera, [targetReference, portalFrame, portalRoot, portalCity, portalOrb])
+  fitCameraToElements(camera, [targetReference, portalFrame, contents, portalOrb])
 }

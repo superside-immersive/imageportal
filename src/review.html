@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Portal Review (No XR)</title>
+  <meta name="description" content="Standalone portal scene review page without XR runtime.">
+  <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #061225;
+      --panel-bg: rgba(8, 14, 28, 0.78);
+      --panel-border: rgba(138, 180, 255, 0.28);
+      --text: #eef3ff;
+      --muted: #bdcbed;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 20% 10%, #0d2144 0%, var(--bg) 55%, #040a15 100%);
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    .hud {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 20;
+      max-width: min(420px, calc(100vw - 32px));
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--panel-border);
+      background: var(--panel-bg);
+      backdrop-filter: blur(12px);
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .hud h1 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .hud p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .hud strong {
+      color: var(--text);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hud">
+    <h1>Portal Review (No XR)</h1>
+    <p>Escena de revision sin image tracking ni runtime XR.</p>
+    <p><strong>Controles:</strong> click + drag para mirar, WASD para mover, rueda para zoom del navegador.</p>
+  </div>
+
+  <a-scene
+    renderer="antialias: true; colorManagement: true"
+    loading-screen="enabled: false"
+    background="color: #061225">
+
+    <a-assets timeout="20000">
+      <a-asset-item id="cityModel" src="./assets/citysara.glb"></a-asset-item>
+      <img id="skyTexture" src="./assets/common/clear_sky.jpg" alt="Sky texture">
+    </a-assets>
+
+    <a-entity light="type: ambient; intensity: 0.95; color: #ffffff"></a-entity>
+    <a-entity light="type: directional; intensity: 1.3; color: #fff6e3" position="2 5 3"></a-entity>
+
+    <a-sphere radius="60" segments-width="32" segments-height="16" material="shader: flat; side: back; src: #skyTexture; color: #ffffff"></a-sphere>
+    <a-circle radius="8" rotation="-90 0 0" position="0 -1.1 -6" material="color: #243960"></a-circle>
+
+    <a-sphere radius="0.25" position="0 1 -2" color="#8ab4ff"></a-sphere>
+
+    <a-entity
+      id="city"
+      gltf-model="#cityModel"
+      position="0 -1.0 12"
+      rotation="0 270 0"
+      scale="0.08 0.08 0.08">
+    </a-entity>
+
+    <a-camera position="0 3.2 9" wasd-controls="acceleration: 30" look-controls="pointerLockEnabled: false"></a-camera>
+  </a-scene>
+</body>
+
+</html>

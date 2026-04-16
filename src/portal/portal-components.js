@@ -48,9 +48,20 @@ registerComponent('depth-mask', {
 
   init() {
     this.applied = false
+    this.currentDebug = this.data.debug
     this.applyDepthMask = this.applyDepthMask.bind(this)
     this.el.addEventListener('object3dset', this.applyDepthMask)
     this.el.addEventListener('model-loaded', this.applyDepthMask)
+    this.applyDepthMask()
+  },
+
+  update() {
+    if (this.currentDebug === this.data.debug) {
+      return
+    }
+
+    this.currentDebug = this.data.debug
+    this.applied = false
     this.applyDepthMask()
   },
 
