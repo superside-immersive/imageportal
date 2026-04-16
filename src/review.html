@@ -72,11 +72,12 @@
 
   <a-scene
     renderer="antialias: true; colorManagement: true"
+    gltf-model="dracoDecoderPath: ./external/runtime/resources/draco/; basisTranscoderPath: ./external/runtime/resources/basis/"
     loading-screen="enabled: false"
     background="color: #061225">
 
     <a-assets timeout="20000">
-      <a-asset-item id="cityModel" src="./assets/miamilow.glb"></a-asset-item>
+      <a-asset-item id="cityModel" src="./assets/citysaracomp.glb"></a-asset-item>
       <img id="skyTexture" src="./assets/common/clear_sky.jpg" alt="Sky texture">
     </a-assets>
 

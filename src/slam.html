@@ -192,11 +192,12 @@
   <a-scene
     renderer="antialias: false; colorManagement: true; physicallyCorrectLights: false; precision: mediump"
     xrweb="allowedDevices: any; disableWorldTracking: false; disableDefaultEnvironment: true; delayRun: true"
+    gltf-model="dracoDecoderPath: ./external/runtime/resources/draco/; basisTranscoderPath: ./external/runtime/resources/basis/"
     loading-screen="enabled: false"
     background="color: #05070f">
 
     <a-assets timeout="20000">
-      <a-asset-item id="cityModel" src="./assets/citysara.glb"></a-asset-item>
+      <a-asset-item id="cityModel" src="./assets/citysaracomp.glb"></a-asset-item>
       <img id="imageTargetReference" src="./image-targets/download-1773332030950-2-2_original.png" alt="Image target reference">
       <img id="skyTexture" src="./assets/common/clear_sky.jpg">
     </a-assets>

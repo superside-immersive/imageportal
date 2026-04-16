@@ -79,6 +79,16 @@ const config = {
           noErrorOnMissing: true,
         },
         {
+          from: path.join(rootPath, 'citysaracomp.glb'),
+          to: path.join(distPath, 'assets', 'citysaracomp.glb'),
+          noErrorOnMissing: true,
+        },
+        {
+          from: path.join(rootPath, 'node_modules', 'three', 'examples', 'jsm', 'libs', 'basis'),
+          to: path.join(distPath, 'external', 'runtime', 'resources', 'basis'),
+          noErrorOnMissing: true,
+        },
+        {
           from: path.join(srcPath, 'assets', 'common'),
           to: path.join(distPath, 'assets', 'common'),
           noErrorOnMissing: true,
