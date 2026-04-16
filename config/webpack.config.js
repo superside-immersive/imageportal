@@ -84,7 +84,7 @@ const config = {
           noErrorOnMissing: true,
         },
         {
-          from: path.join(rootPath, 'node_modules', 'three', 'examples', 'jsm', 'libs', 'basis'),
+          from: path.join(rootPath, 'vendor', 'three-r173-basis'),
           to: path.join(distPath, 'external', 'runtime', 'resources', 'basis'),
           noErrorOnMissing: true,
         },
