@@ -77,7 +77,7 @@
     background="color: #061225">
 
     <a-assets timeout="20000">
-      <a-asset-item id="cityModel" src="./assets/citysaracomp.glb"></a-asset-item>
+      <a-asset-item id="cityModel" src="./assets/city-light-blend.glb"></a-asset-item>
       <img id="skyTexture" src="./assets/common/clear_sky.jpg" alt="Sky texture">
     </a-assets>
 
@@ -92,6 +92,7 @@
     <a-entity
       id="city"
       gltf-model="#cityModel"
+      gltf-loop-animation
       position="0 -1.0 12"
       rotation="0 270 0"
       scale="0.08 0.08 0.08">
@@ -99,6 +100,82 @@
 
     <a-camera position="0 3.2 9" wasd-controls="acceleration: 30" look-controls="pointerLockEnabled: false"></a-camera>
   </a-scene>
+
+  <script>
+    if (window.AFRAME && !window.AFRAME.components['gltf-loop-animation']) {
+      window.AFRAME.registerComponent('gltf-loop-animation', {
+        schema: {
+          clip: {type: 'string', default: '*'},
+          timeScale: {default: 1},
+        },
+
+        init() {
+          this.mixer = null
+          this.actions = []
+          this.playAnimations = this.playAnimations.bind(this)
+          this.el.addEventListener('model-loaded', this.playAnimations)
+          this.playAnimations()
+        },
+
+        playAnimations() {
+          const THREE = window.AFRAME?.THREE || window.THREE
+          const mesh = this.el.getObject3D('mesh')
+
+          if (!THREE || !mesh) {
+            return
+          }
+
+          const clips = mesh.animations || []
+          if (clips.length === 0) {
+            return
+          }
+
+          if (this.mixer) {
+            this.mixer.stopAllAction()
+          }
+
+          const selectedClips = this.data.clip === '*'
+            ? clips
+            : clips.filter((clip) => clip.name === this.data.clip)
+
+          if (selectedClips.length === 0) {
+            return
+          }
+
+          this.mixer = new THREE.AnimationMixer(mesh)
+          this.actions = selectedClips.map((clip) => {
+            const action = this.mixer.clipAction(clip)
+            action.setLoop(THREE.LoopRepeat, Infinity)
+            action.clampWhenFinished = false
+            action.enabled = true
+            action.timeScale = this.data.timeScale
+            action.play()
+            return action
+          })
+        },
+
+        tick(_, delta) {
+          if (!this.mixer || !delta) {
+            return
+          }
+
+          this.mixer.update(delta / 1000)
+        },
+
+        remove() {
+          this.el.removeEventListener('model-loaded', this.playAnimations)
+
+          if (this.mixer) {
+            this.mixer.stopAllAction()
+            this.mixer.uncacheRoot(this.el.getObject3D('mesh'))
+          }
+
+          this.actions = []
+          this.mixer = null
+        },
+      })
+    }
+  </script>
 </body>
 
 </html>

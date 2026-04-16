@@ -84,6 +84,11 @@ const config = {
           noErrorOnMissing: true,
         },
         {
+          from: path.join(rootPath, 'city-light-blend.glb'),
+          to: path.join(distPath, 'assets', 'city-light-blend.glb'),
+          noErrorOnMissing: true,
+        },
+        {
           from: path.join(rootPath, 'vendor', 'three-r173-basis'),
           to: path.join(distPath, 'external', 'runtime', 'resources', 'basis'),
           noErrorOnMissing: true,
